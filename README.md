@@ -2,7 +2,7 @@
 ![create-tmpl](https://user-images.githubusercontent.com/185555/51308110-41a90500-1aa6-11e9-8616-0d5ee9ea485d.jpg)
 
 # create-tmpl
-Template, template, template...🍪 🍪 🍪
+Template, template, template...🍪🍪🍪
 
 
 ```
