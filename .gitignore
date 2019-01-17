@@ -4,4 +4,4 @@ lib
 .npmrc
 .env
 *.log
-/sync.yml
+/sync.yaml
