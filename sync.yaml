@@ -1,7 +1,0 @@
-modules:
-  - package.json
-
-  # External
-  - ../../@tdb/code/libs/*/package.json
-
-
