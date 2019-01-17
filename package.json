@@ -1,7 +1,7 @@
 {
   "name": "create-tmpl",
   "version": "0.0.1",
-  "description": "Intergalatic template generator.",
+  "description": "Succinct powerful template stamper.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "bin": {
