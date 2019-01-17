@@ -33,6 +33,14 @@
   "files": [
     "**/*"
   ],
+  "keywords": [
+    "template",
+    "generator",
+    "create",
+    "typescript",
+    "rxjs",
+    "composable"
+  ],
   "repository": "https://github.com/philcockfield/create-tmpl",
   "license": "MIT"
 }
