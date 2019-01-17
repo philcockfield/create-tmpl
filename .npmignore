@@ -1,3 +1,4 @@
 .env*
 .log*
 /src
+sync.yaml
