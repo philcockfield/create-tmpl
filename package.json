@@ -31,5 +31,6 @@
   "files": [
     "**/*"
   ],
+  "repository": "https://github.com/philcockfield/create-tmpl",
   "license": "MIT"
 }
