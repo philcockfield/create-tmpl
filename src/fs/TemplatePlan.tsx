@@ -48,6 +48,16 @@ export class TemplatePlan {
   /**
    * Fields.
    */
-  public readonly paths: string[];
+  public paths: string[];
   // public readonly files: ITemplateFile[];
+
+  /**
+   * Adds a new path of source template(s).
+   */
+  public add(path: string | string[]) {
+    // let paths = Array.isArray(path) ? path : [path];
+    // paths = value.flatten(
+    //   await Promise.all(paths.map(p => TemplatePlan.toTemplateFiles(p))),
+    // );
+  }
 }
