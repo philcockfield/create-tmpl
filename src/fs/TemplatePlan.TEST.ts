@@ -42,6 +42,20 @@ describe('TemplatePlan', () => {
         .add({ dir: './tmpl-2' });
       expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
     });
+
+    it('merge in another [tmpl]', () => {
+      const tmpl1 = TemplatePlan.create({ dir: './tmpl-1' });
+      const tmpl2 = TemplatePlan.create([
+        { dir: './tmpl-2' },
+        { dir: './tmpl-3' },
+      ]);
+      const res = tmpl1.add(tmpl2);
+      expect(res.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2' },
+        { dir: './tmpl-3' },
+      ]);
+    });
   });
 
   describe('files', () => {

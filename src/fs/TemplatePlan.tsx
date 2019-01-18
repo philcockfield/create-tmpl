@@ -1,5 +1,6 @@
 import { fsPath, glob, value } from '../common';
 import { ITemplateFile, ITemplateSource } from '../types';
+import { instanceOf } from 'prop-types';
 
 /**
  * Represents a set of template files to transform.
@@ -34,8 +35,11 @@ export class TemplatePlan {
   /**
    * Adds a new template source (pointer to it's directory/files).
    */
-  public add(source: ITemplateSource) {
-    const sources = [...this.sources, source];
+  public add(source: ITemplateSource | TemplatePlan) {
+    const sources =
+      source instanceof TemplatePlan
+        ? [...this.sources, ...source.sources]
+        : [...this.sources, source];
     return new TemplatePlan({ sources });
   }
 
