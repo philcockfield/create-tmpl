@@ -1,1 +1,1 @@
-# Sample
+# tmpl-1
