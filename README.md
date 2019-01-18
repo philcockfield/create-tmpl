@@ -25,13 +25,13 @@ Add simple `transformer` functions to the pipeline to precisely customize each f
 ### Installation
 To use the `tmpl` command-line across your machine install it globally:
 
-```
+```bash
 yarn global add create-tmpl
 ```
 
 then use `tmpl` from any folder:
 
-```
+```bash
 $ tmpl <command> [options]
 $ tmpl --help
 ```
@@ -42,7 +42,7 @@ $ tmpl --help
 ### Local Module
 To use the `tmpl` command locally within your scripts, add it to your module:
 
-```
+```bash
 yarn add create-tmpl
 ```
 
