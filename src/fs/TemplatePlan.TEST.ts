@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import { TemplatePlan } from '.';
-// import { fsPath } from '../common';
 
 describe('TemplatePlan', () => {
-  describe('configuration', () => {
+  describe('create', () => {
     it('it has no sources by default', () => {
       const tmpl = TemplatePlan.create();
       expect(tmpl.config.sources).to.eql([]);
@@ -24,6 +23,26 @@ describe('TemplatePlan', () => {
       const tmpl = TemplatePlan.create(sources);
       expect(tmpl.config.sources.length).to.eql(2);
       expect(tmpl.config.sources).to.eql(sources);
+    });
+  });
+
+  describe('add', () => {
+    it('adds a configuration source (new instance)', () => {
+      const tmpl1 = TemplatePlan.create();
+      const tmpl2 = tmpl1.add({ dir: '.' });
+      expect(tmpl1.config.sources).to.eql([]);
+      expect(tmpl2.config.sources).to.eql([{ dir: '.' }]);
+      expect(tmpl1).to.not.equal(tmpl2); // NB: new instance created.
+    });
+
+    it('chaining', () => {
+      const tmpl = TemplatePlan.create()
+        .add({ dir: './tmpl-1' })
+        .add({ dir: './tmpl-2' });
+      expect(tmpl.config.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2' },
+      ]);
     });
   });
 
