@@ -50,7 +50,7 @@ then invoke it from `scripts` within your `package.json` like so:
 
 ```json
 {
-  "name: "my-module",
+  "name": "my-module",
   "scripts": {
     "postinstall": "tmpl ./node_modules/my-module/setup-template"
   },
