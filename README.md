@@ -8,7 +8,14 @@ Succinct, composable, template stamper...🤖...🤖...🤖
 <p>&nbsp;</p>
 
 ### Introduction
-Take a directory, or compose multiple files and directories, into a template that can be copied to the file-system or memory.  Add simple transformers to the pipeline to precisely customize each file, or conditionally filter the file out, before it is written based on programmatic variables (via the [API](#API)), or values entered by the user into the command-line (via the [CLI](#CLI)).
+Take a directory, or compose multiple files and directories, into a powerful `tmpl` that can be copied to the file-system or memory.  
+
+Add simple transformers to the pipeline to precisely customize each file (or conditionally filter the file out) before it is written based on variable arguments (via the [API](#API)), or values entered by the user into the command-line (via the [CLI](#CLI)).
+
+#### Interfaces
+
+- Simple, flexible programmatic control via the [API](#API)
+- or rich command-line interaction via the [CLI](#CLI)
 
 ---
 
@@ -33,7 +40,7 @@ $ tmpl --help
 ---
 
 ### Local Module
-To use the `tmpl` command locally within you module scripts:
+To use the `tmpl` command locally within your scripts add it to your module:
 
 ```
 yarn add create-tmpl
