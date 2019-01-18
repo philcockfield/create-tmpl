@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-![tmpl](https://user-images.githubusercontent.com/185555/51375551-0b818900-1b6b-11e9-87b0-97e3b76a239f.png)
+![tmpl](https://user-images.githubusercontent.com/185555/51376427-29e88400-1b6d-11e9-8b77-065684f4db5a.png)
 
 Succinct, composable, template stamper...🤖🤖🤖
 
