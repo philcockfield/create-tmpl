@@ -10,7 +10,7 @@ Succinct, composable, template stamper...🤖...🤖...🤖
 ### Introduction
 Take a directory, or compose multiple directories and files together with glob patterns, into a powerful `tmpl` that can be copied anywhere...to the file-system, to memory, wherever.
 
-Add simple `transformer` functions to the pipeline to precisely customize each file (or conditionally filter the file out) as it is written based on variable arguments (via the [API](#API)), or values entered by the user in the command-line (via the [CLI](#CLI)).
+Add simple `transformer` functions to the pipeline to precisely customize each file as it is written taking variable arguments (via the [API](#API)) or the values entered by the user (via the [command-line](#CLI)).
 
 #### Interfaces
 
