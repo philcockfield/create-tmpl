@@ -15,9 +15,47 @@ Take a directory, or compose multiple files and directories, into a template tha
 
 ## CLI
 
+### Installation
+To use the `tmpl` command-line across your machine install it globally:
+
 ```
-yarn create tmpl <name>
+yarn global add create-tmpl
 ```
+
+then use the `tmpl` command from any folder:
+
+```
+$ tmpl <command> [options]
+$ tmpl --help
+```
+
+
+---
+
+### Local Module
+To use the `tmpl` command locally within you module scripts:
+
+```
+yarn add create-tmpl
+```
+
+and access 
+
+```json
+{
+  "name: "my-module",
+  "scripts": {
+    "postinstall": "tmpl ./node_modules/my-module/template"
+  },
+  "dependencies": {
+    "create-tmpl": "latest"
+  }
+}
+```
+
+---
+
+### Commands
 
 
 ## API
