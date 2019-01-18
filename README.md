@@ -39,13 +39,13 @@ To use the `tmpl` command locally within you module scripts:
 yarn add create-tmpl
 ```
 
-and access 
+and invoke it within your `package.json` like:
 
 ```json
 {
   "name: "my-module",
   "scripts": {
-    "postinstall": "tmpl ./node_modules/my-module/template"
+    "postinstall": "tmpl ./node_modules/my-module/setup-template"
   },
   "dependencies": {
     "create-tmpl": "latest"
