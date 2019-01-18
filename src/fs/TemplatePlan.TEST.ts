@@ -1,18 +1,19 @@
 import { expect } from 'chai';
 import { TemplatePlan } from '.';
+import { fsPath } from '../common';
 
 describe('TemplatePlan', () => {
   describe('create', () => {
     it('it has no sources by default', () => {
       const tmpl = TemplatePlan.create();
-      expect(tmpl.config.sources).to.eql([]);
+      expect(tmpl.sources).to.eql([]);
     });
 
     it('takes source within `create` method (single)', () => {
       const source = { dir: '.' };
       const tmpl = TemplatePlan.create(source);
-      expect(tmpl.config.sources.length).to.eql(1);
-      expect(tmpl.config.sources[0]).to.eql(source);
+      expect(tmpl.sources.length).to.eql(1);
+      expect(tmpl.sources[0]).to.eql(source);
     });
 
     it('takes sources within `create` method (array)', () => {
@@ -21,8 +22,8 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-2/foo', pattern: '*.ts' },
       ];
       const tmpl = TemplatePlan.create(sources);
-      expect(tmpl.config.sources.length).to.eql(2);
-      expect(tmpl.config.sources).to.eql(sources);
+      expect(tmpl.sources.length).to.eql(2);
+      expect(tmpl.sources).to.eql(sources);
     });
   });
 
@@ -30,8 +31,8 @@ describe('TemplatePlan', () => {
     it('adds a configuration source (new instance)', () => {
       const tmpl1 = TemplatePlan.create();
       const tmpl2 = tmpl1.add({ dir: '.' });
-      expect(tmpl1.config.sources).to.eql([]);
-      expect(tmpl2.config.sources).to.eql([{ dir: '.' }]);
+      expect(tmpl1.sources).to.eql([]);
+      expect(tmpl2.sources).to.eql([{ dir: '.' }]);
       expect(tmpl1).to.not.equal(tmpl2); // NB: new instance created.
     });
 
@@ -39,40 +40,100 @@ describe('TemplatePlan', () => {
       const tmpl = TemplatePlan.create()
         .add({ dir: './tmpl-1' })
         .add({ dir: './tmpl-2' });
-      expect(tmpl.config.sources).to.eql([
-        { dir: './tmpl-1' },
-        { dir: './tmpl-2' },
-      ]);
+      expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
     });
   });
 
-  // describe('files', () => {
-  //   it('has no files (empty array)', async () => {
-  //     const tmpl = await TemplatePlan.create([]);
-  //     expect(tmpl.paths).to.eql([]);
-  //   });
+  describe('files', () => {
+    it('has no files (dir does not exist)', async () => {
+      const tmpl = TemplatePlan.create({
+        dir: './NO_EXIST',
+        pattern: '**',
+      });
+      const files = await tmpl.files();
+      expect(files.length).to.eql(0);
+    });
 
-  //   it('has no files (path does not exist)', async () => {
-  //     const tmpl = await TemplatePlan.create('./NO_EXIST/readme.md');
-  //     expect(tmpl.paths).to.eql([]);
-  //   });
+    it('has no files (file does not exist)', async () => {
+      const tmpl = TemplatePlan.create({
+        dir: './example/tmpl-1',
+        pattern: 'NO_EXIST.md',
+      });
+      const files = await tmpl.files();
+      expect(files.length).to.eql(0);
+    });
 
-  //   it('has a single file', async () => {
-  //     const tmpl = await TemplatePlan.create('./example/tmpl-1/README.md');
-  //     expect(tmpl.paths.length).to.eql(1);
-  //     expect(tmpl.paths[0].endsWith('tmpl-1/README.md')).to.eql(true);
-  //   });
+    it('has no files (empty dir)', async () => {
+      const tmpl = TemplatePlan.create({
+        dir: './example/empty',
+        pattern: '**',
+      });
+      const files = await tmpl.files();
+      expect(files.length).to.eql(0);
+    });
 
-  //   it('has several files (single glob)', async () => {
-  //     const tmpl = await TemplatePlan.create('./example/tmpl-1/*');
-  //     const names = tmpl.paths.map(p => fsPath.basename(p));
-  //     expect(names).to.include('.babelrc');
-  //     expect(names).to.include('.gitignore');
-  //     expect(names).to.include('README.md');
-  //   });
+    it('has single file', async () => {
+      const source = {
+        dir: './example/tmpl-1',
+        pattern: 'README.md',
+      };
+      const tmpl = TemplatePlan.create(source);
+      const files = await tmpl.files();
+      const file = files[0];
 
-  //   it.skip('overrides files from secondary path', () => {
-  //     // console.log('foo', 123);
-  //   });
-  // });
+      expect(files.length).to.eql(1);
+      expect(file.source).to.eql(source);
+      expect(file.base).to.eql(fsPath.resolve(source.dir));
+      expect(file.path).to.eql('/README.md');
+    });
+
+    it('has multiple files ("**" glob pattern by default)', async () => {
+      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const files = await tmpl.files();
+      const paths = files.map(f => f.path);
+      expect(paths).to.include('/.babelrc');
+      expect(paths).to.include('/.gitignore');
+      expect(paths).to.include('/README.md');
+      expect(paths).to.include('/images/face.svg');
+      expect(paths).to.include('/src/index.ts');
+    });
+
+    it('filter pattern (.ts file only)', async () => {
+      const tmpl = TemplatePlan.create({
+        dir: './example/tmpl-1',
+        pattern: '**/*.ts',
+      });
+      const files = await tmpl.files();
+      const paths = files.map(f => f.path);
+      expect(paths).to.eql(['/index.ts', '/src/index.ts']);
+    });
+
+    it('caches results', async () => {
+      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const files1 = await tmpl.files();
+      const files2 = await tmpl.files();
+      expect(files1).to.equal(files2);
+    });
+
+    it('forces new results (override cache)', async () => {
+      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const files1 = await tmpl.files();
+      const files2 = await tmpl.files({ force: true });
+      expect(files1).to.not.equal(files2);
+    });
+
+    it('override file', async () => {
+      const tmpl = TemplatePlan.create()
+        .add({ dir: './example/tmpl-2' })
+        .add({ dir: './example/sub-folder/tmpl-3' });
+
+      const files = await tmpl.files();
+      const readmes = files.filter(f => f.path.endsWith('/README.md'));
+
+      // NB: One README, taken from `tmpl-3` which overrides `tmpl-2`
+      //     because `tmpl-3` was added after `tmpl-2`.
+      expect(readmes.length).to.eql(1);
+      expect(readmes[0].base.endsWith('/tmpl-3')).to.eql(true);
+    });
+  });
 });
