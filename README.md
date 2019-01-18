@@ -5,11 +5,17 @@ Succinct, composable, template stamper...🤖...🤖...🤖
 
 <p>&nbsp;</p>
 
+### Introduction
+Take a directory, or compose multiple files and directories, into a template that can be copied to the file-system or memory.  Add simple transformers to the pipeline to precisely customize each file, or conditionally filter the file out, before it is written based on programmatic variables (via the [API](#API)), or values entered by the user into the command-line (via the [CLI](#CLI)).
+
+---
+
+
+## CLI
+
 ```
 yarn create tmpl <name>
 ```
-
-## CLI
 
 
 ## API
