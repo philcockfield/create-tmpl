@@ -2,13 +2,14 @@ import { expect } from 'chai';
 import { glob } from '.';
 import { fsPath } from '../libs';
 
-describe.only('glob', () => {
+describe('glob', () => {
   it('finds several files', async () => {
     const pattern = `${__dirname}/glob*.ts`;
     const res = await glob.find(pattern);
     expect(res.length).to.eql(2);
-    expect(res[0].endsWith('glob.TEST.ts')).to.eql(true);
-    expect(res[1].endsWith('glob.ts')).to.eql(true);
+    const names = res.map(p => fsPath.basename(p));
+    expect(names).to.include('glob.TEST.ts');
+    expect(names).to.include('glob.ts');
   });
 
   it('returns no dot-files (default)', async () => {
@@ -23,24 +24,24 @@ describe.only('glob', () => {
   it('returns dot-files', async () => {
     const pattern = fsPath.resolve('./example/tmpl-1/*');
     const res = await glob.find(pattern, { dot: true });
-    const dotFiles = res
+    const files = res
       .map(path => fsPath.basename(path))
       .filter(file => file.startsWith('.'));
-    expect(dotFiles.includes('.babelrc')).to.eql(true);
-    expect(dotFiles.includes('.gitignore')).to.eql(true);
+    expect(files).to.include('.babelrc');
+    expect(files).to.include('.gitignore');
   });
 
   it('returns only files (by default)', async () => {
     const pattern = fsPath.resolve('./example/tmpl-1/*');
     const res = await glob.find(pattern);
     const names = res.map(p => fsPath.basename(p));
-    expect(names.includes('src')).to.not.eql(true);
+    expect(names).to.not.include('src');
   });
 
   it('returns only directories', async () => {
     const pattern = fsPath.resolve('./example/tmpl-1/*');
     const res = await glob.find(pattern, { type: 'DIRS' });
     const names = res.map(p => fsPath.basename(p));
-    expect(names.includes('src')).to.eql(true);
+    expect(names).to.include('src');
   });
 });
