@@ -29,7 +29,7 @@ To use the `tmpl` command-line across your machine install it globally:
 yarn global add create-tmpl
 ```
 
-then use the `tmpl` command from any folder:
+then use `tmpl` from any folder:
 
 ```
 $ tmpl <command> [options]
@@ -40,13 +40,13 @@ $ tmpl --help
 ---
 
 ### Local Module
-To use the `tmpl` command locally within your scripts add it to your module:
+To use the `tmpl` command locally within your scripts, add it to your module:
 
 ```
 yarn add create-tmpl
 ```
 
-and invoke it within your `package.json` like:
+then invoke it from `scripts` within your `package.json` like so:
 
 ```json
 {
@@ -62,8 +62,13 @@ and invoke it within your `package.json` like:
 
 ---
 
-### Commands
+### YAML Configuration
+...
 
+---
+
+### Commands
+...
 
 ## API
-
+...
