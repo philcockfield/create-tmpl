@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/philcockfield/create-tmpl.svg?branch=master)](https://travis-ci.org/philcockfield/create-tmpl)
 ![Header](https://user-images.githubusercontent.com/185555/51378810-daa55200-1b72-11e9-9658-275929147ee9.png)
 
-Succinct, composable, template stamping pipeline...🤖...🤖...🤖  
+Succinct, composable, template stamping pipeline.  
 Think of it as your scaffolding superpower.
 
 <p>&nbsp;</p>
