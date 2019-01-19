@@ -1,6 +1,5 @@
 import { fsPath, glob, value } from '../common';
 import { ITemplateFile, ITemplateSource } from '../types';
-import { instanceOf } from 'prop-types';
 
 /**
  * Represents a set of template files to transform.
