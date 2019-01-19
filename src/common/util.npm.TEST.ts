@@ -1,6 +1,6 @@
 import { npm, log } from '.';
 
-describe.skip('util.npm (integration)', () => {
+describe('util.npm (integration)', () => {
   it.skip('getInfo', async () => {
     const res = await npm.getInfo('create-tmpl');
     log.info(res);
