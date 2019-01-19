@@ -105,12 +105,18 @@ Working with a `Template` moves through three steps:
 
 Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template`.  Conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs).
 
+<p>&nbsp;</p>  
 
-#### Composition (add)
+#### Composition (add source files)
+A template is composed of one or more file locations consisting of a directory and an optional [glob](https://en.wikipedia.org/wiki/Glob_(programming)) pattern.  Template files that are added later with the same paths will override earlier paths.
 
-```ts
-type Foo = {}
-const Foo:IFoo = 123
+```typesript
+import { tmpl } from 'create-tmpl'
+
+const tmpl = Template
+  .create()
+  .add({ dir: './templates/one' }) // NB: Default pattern is '**' (everything)
+  .add({ dir: './templates/two', pattern: '**/*.md' })
 ```
 
 
