@@ -182,17 +182,17 @@ describe('TemplatePlan', () => {
   describe('processors', () => {
     it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
-      const tmpl2 = tmpl1.processor((req, res) => true);
+      const tmpl2 = tmpl1.process((req, res) => true);
       expect(tmpl1).to.not.equal(tmpl2);
     });
 
     it('change => write', async () => {
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create({ dir: './example/tmpl-2' })
-        .processor((req, res) => {
+        .process((req, res) => {
           res.replaceText(/__FOO__/g, 'Hello').next();
         })
-        .processor(async (req, res) => {
+        .process(async (req, res) => {
           const path = fsPath.join(dir, req.path);
           await fs.ensureDir(dir);
           await fs.writeFile(path, req.buffer);

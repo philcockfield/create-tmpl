@@ -100,7 +100,7 @@ YAML...TDB
 ## 🌳 API
 Working with a `Template` moves through three steps:
 1. Template [composition](#Composition (add source files))
-2. Filters and processors
+2. [Filters](#Filtering) and [processors](#Processors)
 3. Execution
 
 Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template` (conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs)).
@@ -113,20 +113,67 @@ A template is composed of one or more file locations consisting of a directory a
 ```typesript
 import { tmpl } from 'create-tmpl'
 
-const tmpl = Template
+const template = tmpl
   .create()
   .add({ dir: './templates/one' }) // NB: Default pattern is '**' (everything)
-  .add({ dir: './templates/two', pattern: '**/*.md' })
+  .add({ dir: './templates/two', pattern: '**/*.md' });
 ```
 
 To see the resulting files that make up the template:
 
 ```typescript
-const files = await tmpl.files()
+const files = await template.files();
 ```
 
 
-<p>&nbsp;</p>  
+<p>&nbsp;</p>
+
+### Filtering
+Create a subset of the template using filters:
+
+```typescript
+const markdown = template.filter((file) => file.path.endsWith('.md'));
+const files = await markdown.files(); // Nowe only markdown files.
+```
+
+<p>&nbsp;</p>
+
+### Processors
+A pipeline of processors provide the mechanism for transorming templates and saving then to the file-system, or wherever you need to send the execution result.  Processors are conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
+
+```typescript
+import { tmpl, path, fs } from 'create-tmpl'
+
+const template = tmpl
+  .create()
+  .add({ dir: './tmpl-1' })
+  .add({ dir: './tmpl-2' })
+  .process((req, res) => {
+    // Transform the text content of files (naive example).
+    res
+      .replaceText(/__GREETING__/g, 'Hello')
+      .next(); // Move to next processor.
+  })
+  .process(async (req, res) => {
+    // Save the file to disk.
+    const dir = path.resolve('./output')
+    await fs.ensureDir(dir);
+    await fs.writeFile(path.join(dir, req.path), req.buffer);
+
+    // Signal operation is complete (no more processor will run).
+    res.complete(); 
+  });
+
+```
+
+We now have a configured template that will run these processors once [executed](#Execution).
+
+### Execution
+
+```typescript
+await template.execute()
+```
+
 
 ---
 
@@ -136,4 +183,7 @@ const files = await tmpl.files()
 - [ ] processor (pre-canned)
   - [ ] writeFile
 - [ ] CLI
+- pass variables to processors.
 
+- Docs
+  - examples with varibles
