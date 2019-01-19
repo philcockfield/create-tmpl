@@ -163,12 +163,12 @@ const template = tmpl
     // Signal operation is complete (no more processor will run).
     res.complete(); 
   });
-
 ```
 
-We now have a configured template that will run these processors once [executed](#Execution).
+<p>&nbsp;</p>
 
 ### Execution
+We now have a configured template that will run these processors when executed.
 
 ```typescript
 await template.execute()
