@@ -168,6 +168,8 @@ describe('TemplatePlan', () => {
       const tmpl = Template.create({ dir: './example/tmpl-2' });
 
       const res = await tmpl.write({ dir: TEST_DIR });
+      console.log('-------------------------------------------');
+      console.log('res', res);
     });
 
     it('replaces existing directory', async () => {

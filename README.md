@@ -29,7 +29,7 @@ The `create-tmpl` module is designed to make creating repeatable scaffolding thr
 ---
 
 
-## CLI
+## 🌳 CLI
 
 ### Installation
 To use the `tmpl` command-line across your machine install it globally:
@@ -79,7 +79,7 @@ then invoke it from `scripts` within your `package.json` like so:
 ### Commands
 ...
 
-## API
+## 🌳 API
 Concepts:
 1. Composition
 2. Filters
