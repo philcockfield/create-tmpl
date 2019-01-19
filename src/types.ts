@@ -22,7 +22,7 @@ export type ITemplateFile = {
 export type TemplateProcessor = (
   req: IProcessRequest,
   res: IProcessResponse,
-) => void | Promise<void>;
+) => any | Promise<any>;
 
 export type IProcessRequest = {
   path: string;

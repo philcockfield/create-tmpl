@@ -34,8 +34,8 @@ describe('TemplatePlan', () => {
     });
   });
 
-  describe('add', () => {
-    it('adds and creates new instance', () => {
+  describe('add (source template)', () => {
+    it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = tmpl1.add({ dir: './tmpl-2' });
       expect(tmpl1).to.not.equal(tmpl2);
@@ -57,7 +57,7 @@ describe('TemplatePlan', () => {
       expect(tmpl.sources).to.eql([{ dir: './tmpl-1', pattern: '*.ts' }]);
     });
 
-    it('merge in another [tmpl]', () => {
+    it('merges in another [tmpl]', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = Template.create([{ dir: './tmpl-2' }, { dir: './tmpl-3' }]);
       const res = tmpl1.add(tmpl2);
@@ -171,9 +171,11 @@ describe('TemplatePlan', () => {
     //   });
     // });
 
-    /**
-     * - .filter
-     */
+    it('adds as a new instance', () => {
+      const tmpl1 = Template.create({ dir: './tmpl-1' });
+      const tmpl2 = tmpl1.processor((req, res) => true);
+      expect(tmpl1).to.not.equal(tmpl2);
+    });
 
     it('change => write', async () => {
       const dir = fsPath.resolve(TEST_DIR);

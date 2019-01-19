@@ -68,8 +68,9 @@ export class Template {
    * Registers a template processor.
    */
   public processor(fn: TemplateProcessor) {
-    this.config.processors = [...this.config.processors, fn];
-    return this;
+    const processors = [...this.config.processors, fn];
+    const sources = this.config.sources;
+    return new Template({ processors, sources });
   }
 
   /**
