@@ -33,8 +33,10 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 - [Useful, Usable, Used](http://wiki.c2.com/?UsefulUsableUsed)
 
 
-<p>&nbsp;</p>
+<p>&nbsp;</p>  
+
 ---
+
 <p>&nbsp;</p>
 
 
@@ -89,8 +91,10 @@ YAML...TDB
 ### Commands
 ...TDB
 
-<p>&nbsp;</p>
+<p>&nbsp;</p>  
+
 ---
+
 <p>&nbsp;</p>
 
 ## 🌳 API
@@ -102,8 +106,10 @@ Concepts:
 ...
 
 
-<p>&nbsp;</p>
+<p>&nbsp;</p>  
+
 ---
+
 <p>&nbsp;</p>
 
 ## TODO
@@ -111,5 +117,3 @@ Concepts:
   - [ ] writeFile
 - [ ] CLI
 
-<p>&nbsp;</p>
-<p>&nbsp;</p>
