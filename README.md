@@ -18,9 +18,9 @@ Add `filter` and `transformer` functions to the pipeline to precisely customize 
 - or rich command-line interaction via the [CLI](#CLI).
 
 ### Philosophy
-The [best programmers are lazy](http://threevirtues.com). If you do anything [more than three times](http://wiki.c2.com/?RuleOfThree), it might be a **good idea to automate it** 🤖.
+The [best programmers are lazy](http://threevirtues.com). If you do anything [more than three times](http://wiki.c2.com/?RuleOfThree), it might be a **good idea to automate it** 🤖
 
-The `create-tmpl` module is here to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort, in fact, you're more likely to do it than not.  
+The `create-tmpl` module is here to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort, in fact, you're more than likely to do it.
 
 #### Design principles:
 
