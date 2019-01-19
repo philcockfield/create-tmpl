@@ -9,6 +9,14 @@ import {
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
+export type AddTemplateSource =
+  | ITemplateSource
+  | ITemplateSource[]
+  | Template
+  | Template[]
+  | string
+  | string[];
+
 export type ITemplateArgs = {
   sources?: ITemplateSource[];
   filters?: TemplateFilter[];
@@ -22,11 +30,9 @@ export class Template {
   /**
    * Creates a new template-plan.
    */
-  public static create(source?: ITemplateSource | ITemplateSource[]) {
-    const sources = source ? (Array.isArray(source) ? source : [source]) : [];
-    let tmpl = new Template({});
-    sources.forEach(source => (tmpl = tmpl.add(source)));
-    return tmpl;
+  public static create(source?: AddTemplateSource) {
+    const tmpl = new Template({});
+    return source ? tmpl.add(source) : tmpl;
   }
 
   /**
@@ -72,12 +78,22 @@ export class Template {
   /**
    * Adds a new template source (pointer to it's directory/files).
    */
-  public add(source: ITemplateSource | Template) {
-    const sources =
-      source instanceof Template
-        ? [...this.sources, ...source.sources]
-        : [...this.sources, source];
-    return this.clone({ sources: R.uniq(sources) });
+  public add(source: AddTemplateSource) {
+    let sources: ITemplateSource[] = [...this.sources];
+
+    const list = Array.isArray(source) ? source : [source];
+    list.forEach(item => {
+      if (item instanceof Template) {
+        return (sources = [...sources, ...item.sources]);
+      }
+      if (typeof item === 'string') {
+        return (sources = [...sources, { dir: item }]);
+      }
+      return (sources = [...sources, item]);
+    });
+
+    sources = R.uniq(sources);
+    return this.clone({ sources });
   }
 
   /**

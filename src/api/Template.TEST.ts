@@ -43,6 +43,16 @@ describe('TemplatePlan', () => {
       expect(tmpl2.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
     });
 
+    it('add from string', () => {
+      const tmpl = Template.create().add('./tmpl-1');
+      expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }]);
+    });
+
+    it('add from string array', () => {
+      const tmpl = Template.create().add(['./tmpl-1', './tmpl-2']);
+      expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
+    });
+
     it('chaining', () => {
       const tmpl = Template.create()
         .add({ dir: './tmpl-1' })
@@ -64,6 +74,22 @@ describe('TemplatePlan', () => {
       expect(res.sources).to.eql([
         { dir: './tmpl-1' },
         { dir: './tmpl-2' },
+        { dir: './tmpl-3' },
+      ]);
+    });
+
+    it('merges multiple [tmpl]\'s', () => {
+      const tmpl1 = Template.create({ dir: './tmpl-1' });
+      const tmpl2 = Template.create(['./tmpl-2', './tmpl-4']);
+      const tmpl3 = Template.create().add('./tmpl-3');
+      const tmpl4 = Template.create().add('./tmpl-4');
+      const res = tmpl1.add([tmpl2, tmpl3, tmpl3, tmpl1, tmpl4]);
+
+      // NB: Added multiple times and de-duped.
+      expect(res.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2' },
+        { dir: './tmpl-4' },
         { dir: './tmpl-3' },
       ]);
     });
