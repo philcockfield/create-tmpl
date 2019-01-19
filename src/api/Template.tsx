@@ -1,12 +1,18 @@
-import * as processors from './processors';
-import { fs, fsPath, glob, value, isBinaryFile } from '../common';
+import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
+  IProcessResponse,
   ITemplateFile,
   ITemplateSource,
-  IProcessRequest,
-  IProcessResponse,
   TemplateProcessor,
+  TemplateFilter,
 } from '../types';
+import { Request } from './Request';
+
+export type ITemplateArgs = {
+  sources?: ITemplateSource[];
+  filters?: TemplateFilter[];
+  processors?: TemplateProcessor[];
+};
 
 /**
  * Represents a set of template files to transform.
@@ -25,17 +31,34 @@ export class Template {
   /**
    * Constructor.
    */
-  private constructor(args: {}) {}
+  private constructor(args: ITemplateArgs) {
+    const { sources, filters, processors } = args;
+    this.config.sources = sources || this.config.sources;
+    this.config.filters = filters || this.config.filters;
+    this.config.processors = processors || this.config.processors;
+  }
 
   /**
-   * Fields.
+   * Creates a clone of the Template.
+   */
+  public clone(args: ITemplateArgs = {}) {
+    return new Template({
+      sources: args.sources || this.config.sources,
+      processors: args.processors || this.config.processors,
+      filters: args.filters || this.config.filters,
+    });
+  }
+
+  /**
+   * Internal configuration.
    */
   private readonly config = {
+    processors: [] as TemplateProcessor[],
+    sources: [] as ITemplateSource[],
+    filters: [] as TemplateFilter[],
     cache: {
       files: undefined as ITemplateFile[] | undefined,
     },
-    processors: [] as TemplateProcessor[],
-    sources: [] as ITemplateSource[],
   };
 
   /**
@@ -49,19 +72,27 @@ export class Template {
    * Adds a new template source (pointer to it's directory/files).
    */
   public add(source: ITemplateSource | Template) {
-    this.config.sources =
+    const sources =
       source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
-    return this;
+    return this.clone({ sources: R.uniq(sources) });
+  }
+
+  /**
+   * Filter the set of files.
+   */
+  public filter(fn: TemplateFilter) {
+    const filters = [...this.config.filters, fn];
+    return this.clone({ filters });
   }
 
   /**
    * Registers a template processor.
    */
   public processor(fn: TemplateProcessor) {
-    this.config.processors = [...this.config.processors, fn];
-    return this;
+    const processors = [...this.config.processors, fn];
+    return this.clone({ processors });
   }
 
   /**
@@ -74,7 +105,7 @@ export class Template {
       return this.config.cache.files;
     }
 
-    // Look up files.
+    // Lookup files.
     const wait = this.sources.map(source => getFiles(source));
     let files = value.flatten(await Promise.all(wait)) as ITemplateFile[];
 
@@ -91,6 +122,13 @@ export class Template {
       )
       .reverse();
 
+    // Apply any filters.
+    const filters = this.config.filters;
+    files =
+      filters.length === 0
+        ? files
+        : files.filter(file => filters.every(filter => filter(file)));
+
     // Finish up.
     this.config.cache.files = files;
     return files;
@@ -106,63 +144,9 @@ export class Template {
       return;
     }
 
-    // Fire events.
+    // Run the processor pipe-line.
     const files = await this.files({ cache });
-    const wait = files.map(file => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const path = fsPath.join(file.base, file.path);
-          let isResolved = false;
-          const done = () => {
-            if (!isResolved) {
-              isResolved = true;
-              resolve();
-            }
-          };
-
-          let index = 0;
-          const buffer = await fs.readFile(path);
-          let text = file.isBinary ? undefined : buffer.toString();
-
-          const res: IProcessResponse = {
-            text: (change: string) => {
-              text = change;
-              return res;
-            },
-            replaceText: (searchValue, replaceValue) => {
-              text =
-                text === undefined
-                  ? undefined
-                  : text.replace(searchValue, replaceValue);
-              return res;
-            },
-
-            next: () => {
-              index++;
-              if (index < processors.length) {
-                runProcessor(index);
-              } else {
-                done();
-              }
-            },
-            complete: () => {
-              done();
-            },
-          };
-
-          const runProcessor = async (index: number) => {
-            const fn = processors[index];
-            if (!isResolved && fn) {
-              const req: IProcessRequest = { file, buffer, text };
-              fn(req, res);
-            }
-          };
-          runProcessor(0);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
+    const wait = files.map(file => runProcessors({ processors, file }));
 
     // Finish up.
     await Promise.all(wait);
@@ -190,4 +174,69 @@ async function getFiles(source: ITemplateSource) {
     return file;
   });
   return Promise.all(wait);
+}
+
+function runProcessors(args: {
+  processors: TemplateProcessor[];
+  file: ITemplateFile;
+}) {
+  return new Promise(async (resolve, reject) => {
+    const { processors, file } = args;
+    let isResolved = false;
+
+    try {
+      const done = () => {
+        if (!isResolved) {
+          isResolved = true;
+          resolve();
+        }
+      };
+
+      const buffer = await fs.readFile(fsPath.join(file.base, file.path));
+      let text = file.isBinary ? undefined : buffer.toString();
+
+      const res: IProcessResponse = {
+        next: () => runNext(),
+        complete: () => done(),
+
+        text(change: string) {
+          text = change;
+          return res;
+        },
+
+        replaceText(searchValue, replaceValue) {
+          text =
+            text === undefined
+              ? undefined
+              : text.replace(searchValue, replaceValue);
+          return res;
+        },
+      };
+
+      const runProcessor = async (index: number) => {
+        const fn = processors[index];
+        if (isResolved || !fn) {
+          return;
+        }
+        const path = file.path;
+        const content = text || buffer;
+        const req = new Request({ path, content });
+        fn(req, res);
+      };
+
+      let index = 0;
+      const runNext = () => {
+        index++;
+        if (index < processors.length) {
+          runProcessor(index);
+        } else {
+          done();
+        }
+      };
+
+      runProcessor(0);
+    } catch (error) {
+      reject(error);
+    }
+  });
 }

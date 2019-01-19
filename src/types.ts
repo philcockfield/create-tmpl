@@ -17,14 +17,20 @@ export type ITemplateFile = {
 };
 
 /**
- * Write template.
+ * Filter.
+ */
+export type TemplateFilter = (file: ITemplateFile) => boolean;
+
+/**
+ * Processor.
  */
 export type TemplateProcessor = (
   req: IProcessRequest,
   res: IProcessResponse,
-) => void | Promise<void>;
+) => any | Promise<any>;
+
 export type IProcessRequest = {
-  file: ITemplateFile;
+  path: string;
   buffer: Buffer;
   text?: string;
 };
@@ -39,21 +45,3 @@ export type IProcessResponse = {
   next: () => void;
   complete: () => void;
 };
-
-/**
- * EVENTS
- */
-// export type ITemplateEvent = IBeforeWriteFileEvent | IAfterWriteFileEvent;
-
-// export type IBeforeWriteFileEvent = {
-//   type: 'WRITE_FILE/BEFORE';
-//   payload: {
-//     file: ITemplateFile;
-//     target: { dir: string };
-//   };
-// };
-
-// export type IAfterWriteFileEvent = {
-//   type: 'WRITE_FILE/AFTER';
-//   payload: { file: ITemplateFile };
-// };
