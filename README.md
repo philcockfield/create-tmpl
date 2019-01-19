@@ -98,12 +98,21 @@ YAML...TDB
 <p>&nbsp;</p>
 
 ## 🌳 API
-Concepts:
-1. Template composition
-2. Filters
-3. Processors (transforming, writing)
+Working with a `Template` moves through three steps:
+1. Template composition (add)
+2. Filters and processors
+3. Execution
 
-...
+Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template`.  Conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs).
+
+
+#### Composition (add)
+
+```ts
+type Foo = {}
+const Foo:IFoo = 123
+```
+
 
 
 <p>&nbsp;</p>  
