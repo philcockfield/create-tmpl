@@ -119,6 +119,11 @@ const tmpl = Template
   .add({ dir: './templates/two', pattern: '**/*.md' })
 ```
 
+To see the resulting files that make up the template:
+
+```typescript
+const files = await tmpl.files()
+```
 
 
 <p>&nbsp;</p>  
