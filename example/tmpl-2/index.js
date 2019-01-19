@@ -1,1 +1,1 @@
-console.log('__FOO__');
+console.log('__GREETING__');
