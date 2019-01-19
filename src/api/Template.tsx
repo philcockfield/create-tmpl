@@ -4,13 +4,13 @@ import { ITemplateFile, ITemplateSource } from '../types';
 /**
  * Represents a set of template files to transform.
  */
-export class TemplatePlan {
+export class Template {
   /**
    * Creates a new template-plan.
    */
   public static create(source?: ITemplateSource | ITemplateSource[]) {
     const sources = source ? (Array.isArray(source) ? source : [source]) : [];
-    let tmpl = new TemplatePlan({});
+    let tmpl = new Template({});
     sources.forEach(source => (tmpl = tmpl.add(source)));
     return tmpl;
   }
@@ -34,12 +34,12 @@ export class TemplatePlan {
   /**
    * Adds a new template source (pointer to it's directory/files).
    */
-  public add(source: ITemplateSource | TemplatePlan) {
+  public add(source: ITemplateSource | Template) {
     const sources =
-      source instanceof TemplatePlan
+      source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
-    return new TemplatePlan({ sources });
+    return new Template({ sources });
   }
 
   /**
