@@ -113,9 +113,9 @@ A template is composed of one or more file locations consisting of a directory a
 Template files that are added later with the same paths will override earlier paths.  Use this capability to create base template folders and then compose together more specialised templates that incrementally expand and alter the base set of files.
 
 ```typescript
-import { tmpl } from 'create-tmpl'
+import { template } from 'create-tmpl'
 
-const template = tmpl
+const tmpl = template
   .create()
   .add({ dir: './templates/one' })
   .add({ dir: './templates/two', pattern: '**/*.md' });
@@ -124,7 +124,7 @@ const template = tmpl
 To see the resulting files that make up the template:
 
 ```typescript
-const files = await template.files();
+const files = await tmpl.files();
 ```
 
 
@@ -134,7 +134,7 @@ const files = await template.files();
 Create a subset of the template using filters:
 
 ```typescript
-const markdown = template.filter((file) => file.path.endsWith('.md'));
+const markdown = tmpl.filter((file) => file.path.endsWith('.md'));
 const files = await markdown.files(); // Nowe only markdown files.
 ```
 
@@ -144,9 +144,9 @@ const files = await markdown.files(); // Nowe only markdown files.
 A pipeline of processors provide the mechanism for transforming templates and saving them to the file-system, or wherever you need to send the execution result.  Processors are conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
 
 ```typescript
-import { tmpl, path, fs } from 'create-tmpl'
+import { template, path, fs } from 'create-tmpl'
 
-const template = tmpl
+const tmpl = template
   .create()
   .add({ dir: './tmpl-1' })
   .add({ dir: './tmpl-2' })
@@ -176,7 +176,7 @@ We now have a configured template that will transform text files and save them t
 Let's execute it:
 
 ```typescript
-await template.execute()
+await tmpl.execute()
 ```
 
 
