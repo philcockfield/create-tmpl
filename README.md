@@ -148,19 +148,21 @@ const template = tmpl
   .create()
   .add({ dir: './tmpl-1' })
   .add({ dir: './tmpl-2' })
+
   .process((req, res) => {
     // Transform the text content of files (naive example).
     res
       .replaceText(/__GREETING__/g, 'Hello')
-      .next(); // Move to next processor.
+      .next(); // Signal to move to next processor.
   })
+
   .process(async (req, res) => {
     // Save the file to disk.
     const dir = path.resolve('./output')
     await fs.ensureDir(dir);
     await fs.writeFile(path.join(dir, req.path), req.buffer);
 
-    // Signal operation is complete (no more processor will run).
+    // Signal the operation is complete (no more processor will run).
     res.complete(); 
   });
 ```
