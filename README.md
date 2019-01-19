@@ -31,6 +31,7 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 
 #### Maxims
 - [Rule of Three](http://wiki.c2.com/?RuleOfThree) | [Three Strikes And You Automate](http://wiki.c2.com/?ThreeStrikesAndYouAutomate)
+- [Automation Is Our Friend](http://wiki.c2.com/?AutomationIsOurFriend)
 - [Useful, Usable, Used](http://wiki.c2.com/?UsefulUsableUsed)
 
 
