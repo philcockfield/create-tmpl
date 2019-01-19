@@ -98,7 +98,8 @@ Concepts:
 
 
 ## TODO
-- filter
-- processor (pre-canned)
-  - writeFile
-- CLI
+- [ ] immutable
+- [ ] filter
+- [ ] processor (pre-canned)
+  - [ ] writeFile
+- [ ] CLI

@@ -1,4 +1,3 @@
-import * as processors from './processors';
 import { fs, fsPath, glob, value, isBinaryFile } from '../common';
 import {
   ITemplateFile,
@@ -7,6 +6,7 @@ import {
   IProcessResponse,
   TemplateProcessor,
 } from '../types';
+import { Request } from './Request';
 
 /**
  * Represents a set of template files to transform.
@@ -106,63 +106,9 @@ export class Template {
       return;
     }
 
-    // Fire events.
+    // Run the processor pipe-line.
     const files = await this.files({ cache });
-    const wait = files.map(file => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const path = fsPath.join(file.base, file.path);
-          let isResolved = false;
-          const done = () => {
-            if (!isResolved) {
-              isResolved = true;
-              resolve();
-            }
-          };
-
-          let index = 0;
-          const buffer = await fs.readFile(path);
-          let text = file.isBinary ? undefined : buffer.toString();
-
-          const res: IProcessResponse = {
-            text: (change: string) => {
-              text = change;
-              return res;
-            },
-            replaceText: (searchValue, replaceValue) => {
-              text =
-                text === undefined
-                  ? undefined
-                  : text.replace(searchValue, replaceValue);
-              return res;
-            },
-
-            next: () => {
-              index++;
-              if (index < processors.length) {
-                runProcessor(index);
-              } else {
-                done();
-              }
-            },
-            complete: () => {
-              done();
-            },
-          };
-
-          const runProcessor = async (index: number) => {
-            const fn = processors[index];
-            if (!isResolved && fn) {
-              const req: IProcessRequest = { file, buffer, text };
-              fn(req, res);
-            }
-          };
-          runProcessor(0);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
+    const wait = files.map(file => runProcessors({ processors, file }));
 
     // Finish up.
     await Promise.all(wait);
@@ -190,4 +136,69 @@ async function getFiles(source: ITemplateSource) {
     return file;
   });
   return Promise.all(wait);
+}
+
+function runProcessors(args: {
+  processors: TemplateProcessor[];
+  file: ITemplateFile;
+}) {
+  return new Promise(async (resolve, reject) => {
+    const { processors, file } = args;
+    let isResolved = false;
+
+    try {
+      const done = () => {
+        if (!isResolved) {
+          isResolved = true;
+          resolve();
+        }
+      };
+
+      const buffer = await fs.readFile(fsPath.join(file.base, file.path));
+      let text = file.isBinary ? undefined : buffer.toString();
+
+      const res: IProcessResponse = {
+        next: () => runNext(),
+        complete: () => done(),
+
+        text(change: string) {
+          text = change;
+          return res;
+        },
+
+        replaceText(searchValue, replaceValue) {
+          text =
+            text === undefined
+              ? undefined
+              : text.replace(searchValue, replaceValue);
+          return res;
+        },
+      };
+
+      const runProcessor = async (index: number) => {
+        const fn = processors[index];
+        if (isResolved || !fn) {
+          return;
+        }
+        const path = file.path;
+        const content = text || buffer;
+        const req = new Request({ path, content });
+        fn(req, res);
+      };
+
+      let index = 0;
+      const runNext = () => {
+        index++;
+        if (index < processors.length) {
+          runProcessor(index);
+        } else {
+          done();
+        }
+      };
+
+      runProcessor(0);
+    } catch (error) {
+      reject(error);
+    }
+  });
 }

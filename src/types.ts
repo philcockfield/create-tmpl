@@ -23,8 +23,9 @@ export type TemplateProcessor = (
   req: IProcessRequest,
   res: IProcessResponse,
 ) => void | Promise<void>;
+
 export type IProcessRequest = {
-  file: ITemplateFile;
+  path: string;
   buffer: Buffer;
   text?: string;
 };

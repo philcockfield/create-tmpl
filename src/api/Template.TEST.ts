@@ -167,9 +167,9 @@ describe('TemplatePlan', () => {
           res.replaceText(/__FOO__/g, 'Hello').next();
         })
         .processor(async (req, res) => {
-          const path = fsPath.join(dir, req.file.path);
+          const path = fsPath.join(dir, req.path);
           await fs.ensureDir(dir);
-          await fs.writeFile(path, req.file.isBinary ? req.buffer : req.text);
+          await fs.writeFile(path, req.buffer);
           res.complete();
         });
 
