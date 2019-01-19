@@ -1,8 +1,15 @@
 import { expect } from 'chai';
 import { Template } from '.';
-import { fsPath } from '../common';
+import { fsPath, fs } from '../common';
+import { expectError } from '@tdb/test';
+
+const TEST_DIR = './tmp/test';
+const cleanUp = async () => fs.remove(TEST_DIR);
 
 describe('TemplatePlan', () => {
+  beforeEach(cleanUp);
+  // afterEach(cleanUp);
+
   describe('create', () => {
     it('it has no sources by default', () => {
       const tmpl = Template.create();
@@ -145,6 +152,33 @@ describe('TemplatePlan', () => {
       //     because `tmpl-3` was added after `tmpl-2`.
       expect(readmes.length).to.eql(1);
       expect(readmes[0].base.endsWith('/tmpl-3')).to.eql(true);
+    });
+  });
+
+  describe('write', () => {
+    it('throws if the given directory exists', async () => {
+      const tmpl = Template.create({ dir: './example/tmpl-1' });
+      await fs.ensureDir(TEST_DIR);
+      await expectError(async () => {
+        await tmpl.write({ dir: TEST_DIR });
+      });
+    });
+
+    it('FOO', async () => {
+      const tmpl = Template.create({ dir: './example/tmpl-2' });
+
+      const res = await tmpl.write({ dir: TEST_DIR });
+    });
+
+    it('replaces existing directory', async () => {
+      const existingFile = fsPath.join(TEST_DIR, 'FOO.txt');
+      const tmpl = Template.create({ dir: './example/tmpl-2' });
+      await fs.ensureDir(TEST_DIR);
+      await fs.writeFile(existingFile, 'hello\n');
+      await tmpl.write({ dir: TEST_DIR, replace: true });
+
+      // NB: Removes the existing file.
+      expect(await fs.pathExists(existingFile)).to.eql(false);
     });
   });
 });

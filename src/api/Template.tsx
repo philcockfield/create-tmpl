@@ -1,4 +1,4 @@
-import { fsPath, glob, value } from '../common';
+import { fs, fsPath, glob, value } from '../common';
 import { ITemplateFile, ITemplateSource } from '../types';
 
 /**
@@ -74,13 +74,35 @@ export class Template {
     return files;
   }
 
-  public async write(options: {} = {}) {}
+  /**
+   * Writes the template to a target.
+   */
+  public async write(args: {
+    dir: string;
+    cache?: boolean;
+    replace?: boolean;
+  }) {
+    const { cache, replace } = args;
+    const dir = fsPath.resolve(args.dir);
+
+    // Ensure the target directory does not already exist.
+    const exists = await fs.pathExists(dir);
+    if (exists && !replace) {
+      const err = `Cannot write template, the target path already exists: ${dir}`;
+      throw new Error(err);
+    }
+    if (exists && replace === true) {
+      await fs.remove(dir);
+      await fs.ensureDir(dir);
+    }
+
+    // console.log('write', args);
+  }
 }
 
 /**
  * INTERNAL
  */
-
 async function getFiles(source: ITemplateSource) {
   const { dir, pattern = '**' } = source;
   const base = fsPath.resolve(dir);
