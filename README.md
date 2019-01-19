@@ -188,10 +188,7 @@ await tmpl.execute<IMyVariables>({ variables });
 <p>&nbsp;</p>
 
 ## TODO
+- [ ] CLI
 - [ ] processor (pre-canned)
   - [ ] writeFile
-- [ ] CLI
-- pass variables to processors.
 
-- Docs
-  - examples with varibles
