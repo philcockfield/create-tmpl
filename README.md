@@ -92,9 +92,7 @@ YAML...
 Concepts:
 1. Template composition
 2. Filters
-3. Processors
-   -  Transforming
-   -  Writing
+3. Processors (transforming, writing)
 
 ...
 
