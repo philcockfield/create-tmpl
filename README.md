@@ -29,8 +29,7 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 - Elegant and extensible [API](#API) for integrating into other modules.
 
 #### Patterns
-- [Rule of Three](http://wiki.c2.com/?RuleOfThree)
-- [Things in Threes](http://wiki.c2.com/?ThingsInThrees)
+- [Rule of Three](http://wiki.c2.com/?RuleOfThree) | [Things in Threes](http://wiki.c2.com/?ThingsInThrees)
 - [Useful, Usable, Used](http://wiki.c2.com/?UsefulUsableUsed)
 
 
