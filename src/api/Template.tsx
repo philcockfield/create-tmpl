@@ -45,14 +45,10 @@ export class Template {
   /**
    * Generates the set of files (cached).
    */
-  public async files(options: { force?: boolean } = {}) {
-    const { force = false } = options;
-
-    // Manage cache.
-    if (force) {
-      this._cache.files = undefined;
-    }
-    if (this._cache.files) {
+  public async files(options: { cache?: boolean } = {}) {
+    // Look for cached value.
+    const cache = value.defaultValue(options.cache, true);
+    if (cache && this._cache.files) {
       return this._cache.files;
     }
 
@@ -77,6 +73,8 @@ export class Template {
     this._cache.files = files;
     return files;
   }
+
+  public async write(options: {} = {}) {}
 }
 
 /**

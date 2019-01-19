@@ -129,7 +129,7 @@ describe('TemplatePlan', () => {
     it('forces new results (override cache)', async () => {
       const tmpl = Template.create({ dir: './example/tmpl-1' });
       const files1 = await tmpl.files();
-      const files2 = await tmpl.files({ force: true });
+      const files2 = await tmpl.files({ cache: false });
       expect(files1).to.not.equal(files2);
     });
 
