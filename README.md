@@ -98,8 +98,6 @@ Concepts:
 
 
 ## TODO
-- [ ] immutable
-- [ ] filter
 - [ ] processor (pre-canned)
   - [ ] writeFile
 - [ ] CLI
