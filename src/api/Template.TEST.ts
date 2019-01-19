@@ -8,7 +8,7 @@ const cleanUp = async () => fs.remove(TEST_DIR);
 
 describe('TemplatePlan', () => {
   beforeEach(cleanUp);
-  // afterEach(cleanUp);
+  afterEach(cleanUp);
 
   describe('create', () => {
     it('it has no sources by default', () => {
