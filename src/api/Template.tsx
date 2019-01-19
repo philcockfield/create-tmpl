@@ -7,6 +7,11 @@ import {
 } from '../types';
 import { Request } from './Request';
 
+export type ITemplateArgs = {
+  sources?: ITemplateSource[];
+  processors?: TemplateProcessor[];
+};
+
 /**
  * Represents a set of template files to transform.
  */
@@ -24,13 +29,20 @@ export class Template {
   /**
    * Constructor.
    */
-  private constructor(args: {
-    processors?: TemplateProcessor[];
-    sources?: ITemplateSource[];
-  }) {
-    const { processors, sources } = args;
-    this.config.processors = processors || this.config.processors;
+  private constructor(args: ITemplateArgs) {
+    const { sources, processors } = args;
     this.config.sources = sources || this.config.sources;
+    this.config.processors = processors || this.config.processors;
+  }
+
+  /**
+   * Creates a clone of the Template.
+   */
+  public clone(args: ITemplateArgs = {}) {
+    return new Template({
+      sources: args.sources || this.config.sources,
+      processors: args.processors || this.config.processors,
+    });
   }
 
   /**
@@ -55,13 +67,11 @@ export class Template {
    * Adds a new template source (pointer to it's directory/files).
    */
   public add(source: ITemplateSource | Template) {
-    let sources =
+    const sources =
       source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
-    sources = R.uniq(sources);
-    const processors = this.config.processors;
-    return new Template({ sources, processors });
+    return this.clone({ sources: R.uniq(sources) });
   }
 
   /**
@@ -69,8 +79,7 @@ export class Template {
    */
   public processor(fn: TemplateProcessor) {
     const processors = [...this.config.processors, fn];
-    const sources = this.config.sources;
-    return new Template({ processors, sources });
+    return this.clone({ processors });
   }
 
   /**
@@ -83,7 +92,7 @@ export class Template {
       return this.config.cache.files;
     }
 
-    // Look up files.
+    // Lookup files.
     const wait = this.sources.map(source => getFiles(source));
     let files = value.flatten(await Promise.all(wait)) as ITemplateFile[];
 

@@ -163,14 +163,6 @@ describe('TemplatePlan', () => {
   });
 
   describe('processors', () => {
-    // it('throws if the given directory exists', async () => {
-    //   const tmpl = Template.create({ dir: './example/tmpl-1' });
-    //   await fs.ensureDir(TEST_DIR);
-    //   await expectError(async () => {
-    //     await tmpl.execute({ dir: TEST_DIR });
-    //   });
-    // });
-
     it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = tmpl1.processor((req, res) => true);
@@ -203,16 +195,5 @@ describe('TemplatePlan', () => {
       expect(file.readme).to.include(`# tmpl-2`);
       expect(isBlueprintBinary).to.eql(true);
     });
-
-    // it.skip('replaces existing directory', async () => {
-    //   const existingFile = fsPath.join(TEST_DIR, 'FOO.txt');
-    //   const tmpl = Template.create({ dir: './example/tmpl-2' });
-    //   await fs.ensureDir(TEST_DIR);
-    //   await fs.writeFile(existingFile, 'hello\n');
-    //   await tmpl.execute({ dir: TEST_DIR, replace: true });
-
-    //   // NB: Removes the existing file.
-    //   expect(await fs.pathExists(existingFile)).to.eql(false);
-    // });
   });
 });
