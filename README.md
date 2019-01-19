@@ -108,14 +108,16 @@ Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` 
 <p>&nbsp;</p>  
 
 ### Composition (add source files)
-A template is composed of one or more file locations consisting of a directory and an optional [glob](https://en.wikipedia.org/wiki/Glob_(programming)) pattern.  Template files that are added later with the same paths will override earlier paths.
+A template is composed of one or more file locations consisting of a directory and an optional [glob](https://en.wikipedia.org/wiki/Glob_(programming)) pattern (default is `**`, everything).  
 
-```typesript
+Template files that are added later with the same paths will override earlier paths.  Use this capability to create base template folders and then compose together more specialised templates that incrementally expand and alter the base set of files.
+
+```typescript
 import { tmpl } from 'create-tmpl'
 
 const template = tmpl
   .create()
-  .add({ dir: './templates/one' }) // NB: Default pattern is '**' (everything)
+  .add({ dir: './templates/one' })
   .add({ dir: './templates/two', pattern: '**/*.md' });
 ```
 
