@@ -165,7 +165,7 @@ const tmpl = template
     await fs.ensureDir(dir);
     await fs.writeFile(path.join(dir, req.path), req.buffer);
 
-    // Signal the operation is complete (no more processor will run).
+    // Signal the operation is complete (no more processors will run).
     res.complete(); 
   });
 ```
