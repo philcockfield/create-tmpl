@@ -2,13 +2,13 @@
 [![Build Status](https://travis-ci.org/philcockfield/create-tmpl.svg?branch=master)](https://travis-ci.org/philcockfield/create-tmpl)
 ![Header](https://user-images.githubusercontent.com/185555/51378810-daa55200-1b72-11e9-9658-275929147ee9.png)
 
-Succinct, composable, template stamper...🤖...🤖...🤖
+Succinct, composable, template stamper...🤖...🤖...🤖  
 Think of it as your machinary for making scaffolding.
 
 <p>&nbsp;</p>
 
 ### Introduction
-Compose directories and files together with glob patterns into a powerful `tmpl` that can be copied anywhere...to the file-system, to memory, wherever.
+Compose directories and files together with [glob](https://en.wikipedia.org/wiki/Glob_(programming)) patterns into a powerful `tmpl` that can be copied anywhere...to the file-system, to memory, wherever.
 
 Add simple `transformer` functions to the pipeline to precisely customize each file as it is written taking variable arguments (via the [API](#API)) or the values entered by the user (via the [command-line](#CLI)).
 
@@ -20,11 +20,13 @@ Add simple `transformer` functions to the pipeline to precisely customize each f
 ### Philosophy
 The [best programmers are lazy](http://threevirtues.com). If you do anything more than three times, it might be a **good idea to automate it** 🤖.
 
-The `create-tmpl` module is here to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort that you're more likely to do it than not.  Design principles:
+The `create-tmpl` module is here to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort that you're more likely to do it than not.  
 
-- Simple configuration (or "no-configuration").
-- Powerful CLI that's fun to use.
-- Elegant and extensible API when integrating into another module.
+#### Design principles:
+
+- Simple [configuration](Configuration) (or "no-configuration").
+- Powerful [command-line](#CLI) that's fast and fun to use.
+- Elegant and extensible [API](#API) when integrating into another module.
 
 ---
 
@@ -71,13 +73,15 @@ then invoke it from `scripts` within your `package.json` like so:
 
 ---
 
-### YAML Configuration
-...
+### Configuration
+YAML...
 
 ---
 
 ### Commands
 ...
+
+---
 
 ## 🌳 API
 Concepts:
