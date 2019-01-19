@@ -135,7 +135,7 @@ Create a subset of the template using filters:
 
 ```typescript
 const markdown = tmpl.filter((file) => file.path.endsWith('.md'));
-const files = await markdown.files(); // Nowe only markdown files.
+const files = await markdown.files(); // Now only markdown files.
 ```
 
 <p>&nbsp;</p>
