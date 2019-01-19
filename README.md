@@ -24,6 +24,7 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 
 #### Design principles
 
+- Lean on the file-system.
 - Simple [configuration](Configuration) (or "no-configuration").
 - Beautiful [command-line](#CLI) that's fast and fun to use.
 - Elegant and extensible [API](#API) for integrating into other modules.
