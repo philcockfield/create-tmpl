@@ -98,7 +98,7 @@ YAML...TDB
 <p>&nbsp;</p>
 
 ## 🌳 API
-Working with a `Template` moves through three steps:
+Working with a `Template` moves through three stages:
 1. Template [composition](#Composition (add source files))
 2. [Filters](#Filtering) and [processors](#Processors)
 3. Execution
@@ -139,7 +139,7 @@ const files = await markdown.files(); // Nowe only markdown files.
 <p>&nbsp;</p>
 
 ### Processors
-A pipeline of processors provide the mechanism for transorming templates and saving then to the file-system, or wherever you need to send the execution result.  Processors are conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
+A pipeline of processors provide the mechanism for transforming templates and saving them to the file-system, or wherever you need to send the execution result.  Processors are conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
 
 ```typescript
 import { tmpl, path, fs } from 'create-tmpl'
