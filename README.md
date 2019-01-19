@@ -3,7 +3,7 @@
 ![Header](https://user-images.githubusercontent.com/185555/51378810-daa55200-1b72-11e9-9658-275929147ee9.png)
 
 Succinct, composable, template stamper...🤖...🤖...🤖  
-Think of it as your machinary for making scaffolding.
+Think of it as your scaffolding superpower.
 
 <p>&nbsp;</p>
 

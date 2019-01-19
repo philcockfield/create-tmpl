@@ -1,7 +1,7 @@
 import { expect } from 'chai';
+
 import { Template } from '.';
-import { fsPath, fs } from '../common';
-import { expectError } from '@tdb/test';
+import { fs, fsPath, isBinaryFile } from '../common';
 
 const TEST_DIR = './tmp/test';
 const cleanUp = async () => fs.remove(TEST_DIR);
@@ -35,14 +35,6 @@ describe('TemplatePlan', () => {
   });
 
   describe('add', () => {
-    it('adds a configuration source (new instance)', () => {
-      const tmpl1 = Template.create();
-      const tmpl2 = tmpl1.add({ dir: '.' });
-      expect(tmpl1.sources).to.eql([]);
-      expect(tmpl2.sources).to.eql([{ dir: '.' }]);
-      expect(tmpl1).to.not.equal(tmpl2); // NB: new instance created.
-    });
-
     it('chaining', () => {
       const tmpl = Template.create()
         .add({ dir: './tmpl-1' })
@@ -155,32 +147,55 @@ describe('TemplatePlan', () => {
     });
   });
 
-  describe('write', () => {
-    it('throws if the given directory exists', async () => {
-      const tmpl = Template.create({ dir: './example/tmpl-1' });
-      await fs.ensureDir(TEST_DIR);
-      await expectError(async () => {
-        await tmpl.write({ dir: TEST_DIR });
-      });
+  describe('processors', () => {
+    // it('throws if the given directory exists', async () => {
+    //   const tmpl = Template.create({ dir: './example/tmpl-1' });
+    //   await fs.ensureDir(TEST_DIR);
+    //   await expectError(async () => {
+    //     await tmpl.execute({ dir: TEST_DIR });
+    //   });
+    // });
+
+    /**
+     * - .filter
+     */
+
+    it('change => write', async () => {
+      const dir = fsPath.resolve(TEST_DIR);
+      const tmpl = Template.create({ dir: './example/tmpl-2' })
+        .processor((req, res) => {
+          res.replaceText(/__FOO__/g, 'Hello').next();
+        })
+        .processor(async (req, res) => {
+          const path = fsPath.join(dir, req.file.path);
+          await fs.ensureDir(dir);
+          await fs.writeFile(path, req.file.isBinary ? req.buffer : req.text);
+          res.complete();
+        });
+
+      await tmpl.execute();
+
+      const file = {
+        indexJs: await fs.readFile(fsPath.join(dir, 'index.js'), 'utf8'),
+        readme: await fs.readFile(fsPath.join(dir, 'README.md'), 'utf8'),
+      };
+      const isBlueprintBinary = await isBinaryFile(
+        fsPath.join(dir, 'blueprint.png'),
+      );
+      expect(file.indexJs).to.include(`console.log('Hello');`);
+      expect(file.readme).to.include(`# tmpl-2`);
+      expect(isBlueprintBinary).to.eql(true);
     });
 
-    it.only('FOO', async () => {
-      const tmpl = Template.create({ dir: './example/tmpl-2' });
+    // it.skip('replaces existing directory', async () => {
+    //   const existingFile = fsPath.join(TEST_DIR, 'FOO.txt');
+    //   const tmpl = Template.create({ dir: './example/tmpl-2' });
+    //   await fs.ensureDir(TEST_DIR);
+    //   await fs.writeFile(existingFile, 'hello\n');
+    //   await tmpl.execute({ dir: TEST_DIR, replace: true });
 
-      const res = await tmpl.write({ dir: TEST_DIR });
-      console.log('-------------------------------------------');
-      console.log('res', res);
-    });
-
-    it('replaces existing directory', async () => {
-      const existingFile = fsPath.join(TEST_DIR, 'FOO.txt');
-      const tmpl = Template.create({ dir: './example/tmpl-2' });
-      await fs.ensureDir(TEST_DIR);
-      await fs.writeFile(existingFile, 'hello\n');
-      await tmpl.write({ dir: TEST_DIR, replace: true });
-
-      // NB: Removes the existing file.
-      expect(await fs.pathExists(existingFile)).to.eql(false);
-    });
+    //   // NB: Removes the existing file.
+    //   expect(await fs.pathExists(existingFile)).to.eql(false);
+    // });
   });
 });

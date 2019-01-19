@@ -1,17 +1,12 @@
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import * as processors from '../processors';
+import { fs, fsPath, glob, value, isBinaryFile } from '../common';
 import {
-  takeUntil,
-  take,
-  takeWhile,
-  map,
-  filter,
-  share,
-  delay,
-  distinctUntilChanged,
-} from 'rxjs/operators';
-
-import { fs, fsPath, glob, value } from '../common';
-import { ITemplateFile, ITemplateSource, ITemplateEvent } from '../types';
+  ITemplateFile,
+  ITemplateSource,
+  IProcessRequest,
+  IProcessResponse,
+  TemplateProcessor,
+} from '../types';
 
 /**
  * Represents a set of template files to transform.
@@ -30,31 +25,46 @@ export class Template {
   /**
    * Constructor.
    */
-  private constructor(args: { sources?: ITemplateSource[] }) {
-    const { sources = [] } = args;
-    this.sources = sources;
-  }
+  private constructor(args: {}) {}
 
   /**
    * Fields.
    */
-  public readonly sources: ITemplateSource[] = [];
-  private readonly _cache = {
-    files: undefined as ITemplateFile[] | undefined,
+  private readonly config = {
+    cache: {
+      files: undefined as ITemplateFile[] | undefined,
+    },
+    processors: [] as TemplateProcessor[],
+    sources: [] as ITemplateSource[],
   };
 
-  private _events$ = new Subject<ITemplateEvent>();
-  public readonly events$ = this._events$.pipe(share());
+  // private _events$ = new Subject<ITemplateEvent>();
+  // public readonly events$ = this._events$.pipe(share());
+
+  /**
+   * The source file patterns that make up this template.
+   */
+  public get sources() {
+    return this.config.sources;
+  }
 
   /**
    * Adds a new template source (pointer to it's directory/files).
    */
   public add(source: ITemplateSource | Template) {
-    const sources =
+    this.config.sources =
       source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
-    return new Template({ sources });
+    return this;
+  }
+
+  /**
+   * Registers a template processor.
+   */
+  public processor(fn: TemplateProcessor) {
+    this.config.processors = [...this.config.processors, fn];
+    return this;
   }
 
   /**
@@ -63,8 +73,8 @@ export class Template {
   public async files(options: { cache?: boolean } = {}) {
     // Look for cached value.
     const cache = value.defaultValue(options.cache, true);
-    if (cache && this._cache.files) {
-      return this._cache.files;
+    if (cache && this.config.cache.files) {
+      return this.config.cache.files;
     }
 
     // Look up files.
@@ -85,37 +95,94 @@ export class Template {
       .reverse();
 
     // Finish up.
-    this._cache.files = files;
+    this.config.cache.files = files;
     return files;
   }
 
   /**
-   * Writes the template to a target.
+   * Runs the execution pipeline.
    */
-  public async write(args: {
-    dir: string;
-    cache?: boolean;
-    replace?: boolean;
-  }) {
-    const { cache, replace } = args;
-    const dir = fsPath.resolve(args.dir);
+  public async execute(args: { cache?: boolean } = {}) {
+    const { cache } = args;
+    const processors = this.config.processors;
+    if (processors.length === 0) {
+      return;
+    }
+    // const dir = fsPath.resolve(args.dir);
 
     // Handle existing target location.
-    const exists = await fs.pathExists(dir);
-    if (exists && !replace) {
-      // Directry already exists - fail.
-      const err = `Cannot write template, the target path already exists: ${dir}`;
-      throw new Error(err);
-    }
-    if (exists && replace === true) {
-      // Directory already exists and replace requested.
-      await fs.remove(dir);
-      await fs.ensureDir(dir);
-    }
+    // const exists = await fs.pathExists(dir);
+    // if (exists && !replace) {
+    //   // Directry already exists - fail.
+    //   const err = `Cannot write template, the target path already exists: ${dir}`;
+    //   throw new Error(err);
+    // }
+    // if (exists && replace === true) {
+    //   // Directory already exists and a "replace" was requested.
+    //   await fs.remove(dir);
+    //   await fs.ensureDir(dir);
+    // }
 
-    // console.log('write', args);
+    // Fire events.
     const files = await this.files({ cache });
-    console.log('files', files);
+    const wait = files.map(file => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const path = fsPath.join(file.base, file.path);
+          let isResolved = false;
+          const done = () => {
+            if (!isResolved) {
+              isResolved = true;
+              resolve();
+            }
+          };
+
+          let index = 0;
+          const buffer = await fs.readFile(path);
+          let text = file.isBinary ? undefined : buffer.toString();
+
+          const res: IProcessResponse = {
+            text: (change: string) => {
+              text = change;
+              return res;
+            },
+            replaceText: (searchValue, replaceValue) => {
+              text =
+                text === undefined
+                  ? undefined
+                  : text.replace(searchValue, replaceValue);
+              return res;
+            },
+
+            next: () => {
+              index++;
+              if (index < processors.length) {
+                runProcessor(index);
+              } else {
+                done();
+              }
+            },
+            complete: () => {
+              done();
+            },
+          };
+
+          const runProcessor = async (index: number) => {
+            const fn = processors[index];
+            if (!isResolved && fn) {
+              const req: IProcessRequest = { file, buffer, text };
+              fn(req, res);
+            }
+          };
+          runProcessor(0);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    // Finish up.
+    await Promise.all(wait);
   }
 }
 
@@ -131,8 +198,12 @@ async function getFiles(source: ITemplateSource) {
     dot: true,
   });
   const wait = paths.map(async path => {
-    path = path.substr(base.length);
-    const file: ITemplateFile = { source, base, path };
+    const file: ITemplateFile = {
+      source,
+      base,
+      path: path.substr(base.length),
+      isBinary: await isBinaryFile(path),
+    };
     return file;
   });
   return Promise.all(wait);

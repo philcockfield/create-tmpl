@@ -1,1 +1,1 @@
-console.log('tmpl-2');
+console.log('__FOO__');
