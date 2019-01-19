@@ -17,6 +17,15 @@ Add simple `transformer` functions to the pipeline to precisely customize each f
 - Simple, flexible programmatic control via the [API](#API)
 - or rich command-line interaction via the [CLI](#CLI)
 
+### Philosophy
+The [best programmers are lazy](http://threevirtues.com). If you do anything more than three times, it might be a **good idea to automate it** 🤖.
+
+The `create-tmpl` module is designed to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort that you're more likely to do it than not.  Design principles include:
+
+- Simple configuration (or "no-configuration").
+- Powerful CLI for direct use.
+- Elegant and extensible API when integrating into another module.
+
 ---
 
 
