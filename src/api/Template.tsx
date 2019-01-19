@@ -1,5 +1,17 @@
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import {
+  takeUntil,
+  take,
+  takeWhile,
+  map,
+  filter,
+  share,
+  delay,
+  distinctUntilChanged,
+} from 'rxjs/operators';
+
 import { fs, fsPath, glob, value } from '../common';
-import { ITemplateFile, ITemplateSource } from '../types';
+import { ITemplateFile, ITemplateSource, ITemplateEvent } from '../types';
 
 /**
  * Represents a set of template files to transform.
@@ -30,6 +42,9 @@ export class Template {
   private readonly _cache = {
     files: undefined as ITemplateFile[] | undefined,
   };
+
+  private _events$ = new Subject<ITemplateEvent>();
+  public readonly events$ = this._events$.pipe(share());
 
   /**
    * Adds a new template source (pointer to it's directory/files).
@@ -85,18 +100,22 @@ export class Template {
     const { cache, replace } = args;
     const dir = fsPath.resolve(args.dir);
 
-    // Ensure the target directory does not already exist.
+    // Handle existing target location.
     const exists = await fs.pathExists(dir);
     if (exists && !replace) {
+      // Directry already exists - fail.
       const err = `Cannot write template, the target path already exists: ${dir}`;
       throw new Error(err);
     }
     if (exists && replace === true) {
+      // Directory already exists and replace requested.
       await fs.remove(dir);
       await fs.ensureDir(dir);
     }
 
     // console.log('write', args);
+    const files = await this.files({ cache });
+    console.log('files', files);
   }
 }
 

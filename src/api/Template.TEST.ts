@@ -164,7 +164,7 @@ describe('TemplatePlan', () => {
       });
     });
 
-    it('FOO', async () => {
+    it.only('FOO', async () => {
       const tmpl = Template.create({ dir: './example/tmpl-2' });
 
       const res = await tmpl.write({ dir: TEST_DIR });
