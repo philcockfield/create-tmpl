@@ -146,16 +146,17 @@ A pipeline of processors provide the mechanism for transforming templates and sa
 
 ```typescript
 import { template, path, fs } from 'create-tmpl'
+type IMyVariables = { greeting: string };
 
 const tmpl = template
   .create()
   .add({ dir: './tmpl-1' })
   .add({ dir: './tmpl-2' })
 
-  .process((req, res) => {
-    // Transform the text content of files (naive example).
+  .process<IMyVariables>((req, res) => {
+    // Transform the text content of files (naive example 🤭 ).
     res
-      .replaceText(/__GREETING__/g, 'Hello')
+      .replaceText(/__GREETING__/g, req.variables.greeting)
       .next(); // Signal to move to next processor.
   })
 
@@ -177,7 +178,8 @@ We now have a configured template that will transform text files and save them t
 Let's execute it:
 
 ```typescript
-await tmpl.execute()
+const variables: IMyVariables = { greeting: 'Hello!' };
+await tmpl.execute<IMyVariables>({ variables });
 ```
 
 

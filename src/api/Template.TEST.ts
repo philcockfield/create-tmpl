@@ -187,10 +187,10 @@ describe('TemplatePlan', () => {
     });
 
     it('change => write', async () => {
-      type IVariables = { greeting: string };
+      type IMyVariables = { greeting: string };
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create({ dir: './example/tmpl-2' })
-        .process<IVariables>((req, res) => {
+        .process<IMyVariables>((req, res) => {
           res.replaceText(/__GREETING__/g, req.variables.greeting);
           res.next();
         })
@@ -201,7 +201,7 @@ describe('TemplatePlan', () => {
           res.complete();
         });
 
-      await tmpl.execute<IVariables>({ variables: { greeting: 'Hello!' } });
+      await tmpl.execute<IMyVariables>({ variables: { greeting: 'Hello!' } });
 
       const file = {
         indexJs: await fs.readFile(fsPath.join(dir, 'index.js'), 'utf8'),
