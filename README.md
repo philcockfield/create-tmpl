@@ -96,3 +96,10 @@ Concepts:
 4. Writers
 
 ...
+
+
+## TODO
+- filter
+- processor (pre-canned)
+  - writeFile
+- CLI
