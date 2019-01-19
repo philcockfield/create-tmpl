@@ -162,6 +162,23 @@ describe('TemplatePlan', () => {
     });
   });
 
+  describe('filter', () => {
+    it('adds as a new instance', () => {
+      const tmpl1 = Template.create({ dir: './tmpl-1' });
+      const tmpl2 = tmpl1.filter(file => true);
+      expect(tmpl1).to.not.equal(tmpl2);
+    });
+
+    it('applies filter', async () => {
+      const tmpl1 = Template.create({ dir: './example/tmpl-2' });
+      const tmpl2 = tmpl1.filter(f => f.path.endsWith('.js'));
+      const files1 = await tmpl1.files();
+      const files2 = await tmpl2.files();
+      expect(files1.length).to.eql(3);
+      expect(files2.length).to.eql(1);
+    });
+  });
+
   describe('processors', () => {
     it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });

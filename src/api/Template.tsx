@@ -4,11 +4,13 @@ import {
   ITemplateFile,
   ITemplateSource,
   TemplateProcessor,
+  TemplateFilter,
 } from '../types';
 import { Request } from './Request';
 
 export type ITemplateArgs = {
   sources?: ITemplateSource[];
+  filters?: TemplateFilter[];
   processors?: TemplateProcessor[];
 };
 
@@ -30,8 +32,9 @@ export class Template {
    * Constructor.
    */
   private constructor(args: ITemplateArgs) {
-    const { sources, processors } = args;
+    const { sources, filters, processors } = args;
     this.config.sources = sources || this.config.sources;
+    this.config.filters = filters || this.config.filters;
     this.config.processors = processors || this.config.processors;
   }
 
@@ -42,6 +45,7 @@ export class Template {
     return new Template({
       sources: args.sources || this.config.sources,
       processors: args.processors || this.config.processors,
+      filters: args.filters || this.config.filters,
     });
   }
 
@@ -51,6 +55,7 @@ export class Template {
   private readonly config = {
     processors: [] as TemplateProcessor[],
     sources: [] as ITemplateSource[],
+    filters: [] as TemplateFilter[],
     cache: {
       files: undefined as ITemplateFile[] | undefined,
     },
@@ -72,6 +77,14 @@ export class Template {
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
     return this.clone({ sources: R.uniq(sources) });
+  }
+
+  /**
+   * Filter the set of files.
+   */
+  public filter(fn: TemplateFilter) {
+    const filters = [...this.config.filters, fn];
+    return this.clone({ filters });
   }
 
   /**
@@ -108,6 +121,13 @@ export class Template {
         [] as ITemplateFile[],
       )
       .reverse();
+
+    // Apply any filters.
+    const filters = this.config.filters;
+    files =
+      filters.length === 0
+        ? files
+        : files.filter(file => filters.every(filter => filter(file)));
 
     // Finish up.
     this.config.cache.files = files;
