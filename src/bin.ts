@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
-import { log } from '../common';
+import { log } from './common';
+log.info();
 
 /**
  * Makes the script crash on unhandled rejections instead of silently
@@ -11,36 +12,41 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
-const COMMAND = {
-  INIT: 'init',
+const CMD = {
+  LIST: 'list',
 };
-const COMMANDS = Object.keys(COMMAND).map(key => COMMAND[key]);
+const CMDS = Object.keys(CMD).map(key => CMD[key]);
 
 /**
  * Cheat sheet.
  * https://devhints.io/yargs
  */
+const SCRIPT = log.magenta('tmpl');
+const COMMAND = log.cyan('<command>');
+const OPTIONS = log.gray('[options]');
 const program = yargs
-  .usage(`Usage: ${log.magenta('$0')} ${log.cyan('<command>')} [options]`)
+  .scriptName(SCRIPT)
+  .usage(`${'Usage:'} ${SCRIPT} ${COMMAND} ${OPTIONS}`)
 
   /**
    * `init`
    */
   .command(
-    log.cyan(COMMAND.INIT),
-    'Initialize the module with default files.',
-    e =>
-      e.option('force', {
-        alias: 'f',
-        describe: 'Overwrite existing files.',
-        boolean: true,
-      }),
+    log.cyan(CMD.LIST),
+    'Lists the available templates',
+    e => e,
+    // e.option('force', {
+    //   alias: 'f',
+    //   describe: 'Overwrite existing files.',
+    //   boolean: true,
+    // }),
     e => {
       // const { force, reset } = e;
-      log.info('INIT', e);
+      log.info('ls', e);
       return;
     },
   )
+  .alias('ls', 'list')
 
   .help('h')
   .alias('h', 'help')
@@ -49,7 +55,7 @@ const program = yargs
 /**
  * Show full list of commands if none was provided.
  */
-if (!COMMANDS.includes(program.argv._[0])) {
+if (!CMDS.includes(program.argv._[0])) {
   program.showHelp();
   log.info();
   process.exit(0);

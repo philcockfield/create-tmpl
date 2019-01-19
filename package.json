@@ -5,10 +5,10 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "bin": {
-    "tmpl": "./lib/bin/tmpl.js"
+    "tmpl": "./lib/bin.js"
   },
   "scripts": {
-    "tmp": "node lib/bin/tmpl $@",
+    "tmp": "node lib/bin $@",
     "start": "node .",
     "test": "sh ./node_modules/@tdb/test/sh/test.sh",
     "tdd": "yarn run test --reporter min --watch",
