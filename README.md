@@ -99,7 +99,7 @@ YAML...TDB
 
 ## 🌳 API
 Working with a `Template` moves through three steps:
-1. Template composition (add)
+1. Template [composition](#Composition)
 2. Filters and processors
 3. Execution
 
