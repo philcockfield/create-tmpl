@@ -50,6 +50,13 @@ describe('TemplatePlan', () => {
       expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
     });
 
+    it('prevents adding the same template more than once', () => {
+      const tmpl = Template.create()
+        .add({ dir: './tmpl-1', pattern: '*.ts' })
+        .add({ dir: './tmpl-1', pattern: '*.ts' });
+      expect(tmpl.sources).to.eql([{ dir: './tmpl-1', pattern: '*.ts' }]);
+    });
+
     it('merge in another [tmpl]', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = Template.create([{ dir: './tmpl-2' }, { dir: './tmpl-3' }]);

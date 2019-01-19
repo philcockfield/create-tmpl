@@ -1,4 +1,4 @@
-import { fs, fsPath, glob, isBinaryFile, value } from '../common';
+import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
   IProcessResponse,
   ITemplateFile,
@@ -55,10 +55,11 @@ export class Template {
    * Adds a new template source (pointer to it's directory/files).
    */
   public add(source: ITemplateSource | Template) {
-    const sources =
+    let sources =
       source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
+    sources = R.uniq(sources);
     const processors = this.config.processors;
     return new Template({ sources, processors });
   }
