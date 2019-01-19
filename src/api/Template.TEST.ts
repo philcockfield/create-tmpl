@@ -1,17 +1,24 @@
 import { expect } from 'chai';
-import { TemplatePlan } from '.';
-import { fsPath } from '../common';
+
+import { Template } from '.';
+import { fs, fsPath, isBinaryFile } from '../common';
+
+const TEST_DIR = './tmp/test';
+const cleanUp = async () => fs.remove(TEST_DIR);
 
 describe('TemplatePlan', () => {
+  beforeEach(cleanUp);
+  afterEach(cleanUp);
+
   describe('create', () => {
     it('it has no sources by default', () => {
-      const tmpl = TemplatePlan.create();
+      const tmpl = Template.create();
       expect(tmpl.sources).to.eql([]);
     });
 
     it('takes source within `create` method (single)', () => {
       const source = { dir: '.' };
-      const tmpl = TemplatePlan.create(source);
+      const tmpl = Template.create(source);
       expect(tmpl.sources.length).to.eql(1);
       expect(tmpl.sources[0]).to.eql(source);
     });
@@ -21,32 +28,35 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-1' },
         { dir: './tmpl-2/foo', pattern: '*.ts' },
       ];
-      const tmpl = TemplatePlan.create(sources);
+      const tmpl = Template.create(sources);
       expect(tmpl.sources.length).to.eql(2);
       expect(tmpl.sources).to.eql(sources);
     });
   });
 
   describe('add', () => {
-    it('adds a configuration source (new instance)', () => {
-      const tmpl1 = TemplatePlan.create();
-      const tmpl2 = tmpl1.add({ dir: '.' });
-      expect(tmpl1.sources).to.eql([]);
-      expect(tmpl2.sources).to.eql([{ dir: '.' }]);
-      expect(tmpl1).to.not.equal(tmpl2); // NB: new instance created.
-    });
-
     it('chaining', () => {
-      const tmpl = TemplatePlan.create()
+      const tmpl = Template.create()
         .add({ dir: './tmpl-1' })
         .add({ dir: './tmpl-2' });
       expect(tmpl.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
+    });
+
+    it('merge in another [tmpl]', () => {
+      const tmpl1 = Template.create({ dir: './tmpl-1' });
+      const tmpl2 = Template.create([{ dir: './tmpl-2' }, { dir: './tmpl-3' }]);
+      const res = tmpl1.add(tmpl2);
+      expect(res.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2' },
+        { dir: './tmpl-3' },
+      ]);
     });
   });
 
   describe('files', () => {
     it('has no files (dir does not exist)', async () => {
-      const tmpl = TemplatePlan.create({
+      const tmpl = Template.create({
         dir: './NO_EXIST',
         pattern: '**',
       });
@@ -55,7 +65,7 @@ describe('TemplatePlan', () => {
     });
 
     it('has no files (file does not exist)', async () => {
-      const tmpl = TemplatePlan.create({
+      const tmpl = Template.create({
         dir: './example/tmpl-1',
         pattern: 'NO_EXIST.md',
       });
@@ -64,7 +74,7 @@ describe('TemplatePlan', () => {
     });
 
     it('has no files (empty dir)', async () => {
-      const tmpl = TemplatePlan.create({
+      const tmpl = Template.create({
         dir: './example/empty',
         pattern: '**',
       });
@@ -77,7 +87,7 @@ describe('TemplatePlan', () => {
         dir: './example/tmpl-1',
         pattern: 'README.md',
       };
-      const tmpl = TemplatePlan.create(source);
+      const tmpl = Template.create(source);
       const files = await tmpl.files();
       const file = files[0];
 
@@ -88,7 +98,7 @@ describe('TemplatePlan', () => {
     });
 
     it('has multiple files ("**" glob pattern by default)', async () => {
-      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const tmpl = Template.create({ dir: './example/tmpl-1' });
       const files = await tmpl.files();
       const paths = files.map(f => f.path);
       expect(paths).to.include('/.babelrc');
@@ -99,7 +109,7 @@ describe('TemplatePlan', () => {
     });
 
     it('filter pattern (.ts file only)', async () => {
-      const tmpl = TemplatePlan.create({
+      const tmpl = Template.create({
         dir: './example/tmpl-1',
         pattern: '**/*.ts',
       });
@@ -109,21 +119,21 @@ describe('TemplatePlan', () => {
     });
 
     it('caches results', async () => {
-      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const tmpl = Template.create({ dir: './example/tmpl-1' });
       const files1 = await tmpl.files();
       const files2 = await tmpl.files();
       expect(files1).to.equal(files2);
     });
 
     it('forces new results (override cache)', async () => {
-      const tmpl = TemplatePlan.create({ dir: './example/tmpl-1' });
+      const tmpl = Template.create({ dir: './example/tmpl-1' });
       const files1 = await tmpl.files();
-      const files2 = await tmpl.files({ force: true });
+      const files2 = await tmpl.files({ cache: false });
       expect(files1).to.not.equal(files2);
     });
 
     it('override file', async () => {
-      const tmpl = TemplatePlan.create()
+      const tmpl = Template.create()
         .add({ dir: './example/tmpl-2' })
         .add({ dir: './example/sub-folder/tmpl-3' });
 
@@ -135,5 +145,57 @@ describe('TemplatePlan', () => {
       expect(readmes.length).to.eql(1);
       expect(readmes[0].base.endsWith('/tmpl-3')).to.eql(true);
     });
+  });
+
+  describe('processors', () => {
+    // it('throws if the given directory exists', async () => {
+    //   const tmpl = Template.create({ dir: './example/tmpl-1' });
+    //   await fs.ensureDir(TEST_DIR);
+    //   await expectError(async () => {
+    //     await tmpl.execute({ dir: TEST_DIR });
+    //   });
+    // });
+
+    /**
+     * - .filter
+     */
+
+    it('change => write', async () => {
+      const dir = fsPath.resolve(TEST_DIR);
+      const tmpl = Template.create({ dir: './example/tmpl-2' })
+        .processor((req, res) => {
+          res.replaceText(/__FOO__/g, 'Hello').next();
+        })
+        .processor(async (req, res) => {
+          const path = fsPath.join(dir, req.file.path);
+          await fs.ensureDir(dir);
+          await fs.writeFile(path, req.file.isBinary ? req.buffer : req.text);
+          res.complete();
+        });
+
+      await tmpl.execute();
+
+      const file = {
+        indexJs: await fs.readFile(fsPath.join(dir, 'index.js'), 'utf8'),
+        readme: await fs.readFile(fsPath.join(dir, 'README.md'), 'utf8'),
+      };
+      const isBlueprintBinary = await isBinaryFile(
+        fsPath.join(dir, 'blueprint.png'),
+      );
+      expect(file.indexJs).to.include(`console.log('Hello');`);
+      expect(file.readme).to.include(`# tmpl-2`);
+      expect(isBlueprintBinary).to.eql(true);
+    });
+
+    // it.skip('replaces existing directory', async () => {
+    //   const existingFile = fsPath.join(TEST_DIR, 'FOO.txt');
+    //   const tmpl = Template.create({ dir: './example/tmpl-2' });
+    //   await fs.ensureDir(TEST_DIR);
+    //   await fs.writeFile(existingFile, 'hello\n');
+    //   await tmpl.execute({ dir: TEST_DIR, replace: true });
+
+    //   // NB: Removes the existing file.
+    //   expect(await fs.pathExists(existingFile)).to.eql(false);
+    // });
   });
 });

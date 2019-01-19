@@ -1,4 +1,4 @@
-import { TemplatePlan } from './fs';
-export * from './types';
+import { Template } from './api';
 
-export const create = TemplatePlan.create;
+export * from './types';
+export const create = Template.create;

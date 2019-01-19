@@ -13,4 +13,47 @@ export type ITemplateFile = {
   source: ITemplateSource;
   base: string;
   path: string;
+  isBinary: boolean;
 };
+
+/**
+ * Write template.
+ */
+export type TemplateProcessor = (
+  req: IProcessRequest,
+  res: IProcessResponse,
+) => void | Promise<void>;
+export type IProcessRequest = {
+  file: ITemplateFile;
+  buffer: Buffer;
+  text?: string;
+};
+export type IProcessResponse = {
+  text: (text: string) => IProcessResponse;
+  replaceText: (
+    searchValue: {
+      [Symbol.replace](string: string, replaceValue: string): string;
+    },
+    replaceValue: string,
+  ) => IProcessResponse;
+  next: () => void;
+  complete: () => void;
+};
+
+/**
+ * EVENTS
+ */
+// export type ITemplateEvent = IBeforeWriteFileEvent | IAfterWriteFileEvent;
+
+// export type IBeforeWriteFileEvent = {
+//   type: 'WRITE_FILE/BEFORE';
+//   payload: {
+//     file: ITemplateFile;
+//     target: { dir: string };
+//   };
+// };
+
+// export type IAfterWriteFileEvent = {
+//   type: 'WRITE_FILE/AFTER';
+//   payload: { file: ITemplateFile };
+// };
