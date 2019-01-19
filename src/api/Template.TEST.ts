@@ -35,6 +35,14 @@ describe('TemplatePlan', () => {
   });
 
   describe('add', () => {
+    it('adds and creates new instance', () => {
+      const tmpl1 = Template.create({ dir: './tmpl-1' });
+      const tmpl2 = tmpl1.add({ dir: './tmpl-2' });
+      expect(tmpl1).to.not.equal(tmpl2);
+      expect(tmpl1.sources).to.eql([{ dir: './tmpl-1' }]);
+      expect(tmpl2.sources).to.eql([{ dir: './tmpl-1' }, { dir: './tmpl-2' }]);
+    });
+
     it('chaining', () => {
       const tmpl = Template.create()
         .add({ dir: './tmpl-1' })

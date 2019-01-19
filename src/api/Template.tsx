@@ -1,9 +1,8 @@
-import { fs, fsPath, glob, value, isBinaryFile } from '../common';
+import { fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
+  IProcessResponse,
   ITemplateFile,
   ITemplateSource,
-  IProcessRequest,
-  IProcessResponse,
   TemplateProcessor,
 } from '../types';
 import { Request } from './Request';
@@ -25,17 +24,24 @@ export class Template {
   /**
    * Constructor.
    */
-  private constructor(args: {}) {}
+  private constructor(args: {
+    processors?: TemplateProcessor[];
+    sources?: ITemplateSource[];
+  }) {
+    const { processors, sources } = args;
+    this.config.processors = processors || this.config.processors;
+    this.config.sources = sources || this.config.sources;
+  }
 
   /**
-   * Fields.
+   * Internal configuration.
    */
   private readonly config = {
+    processors: [] as TemplateProcessor[],
+    sources: [] as ITemplateSource[],
     cache: {
       files: undefined as ITemplateFile[] | undefined,
     },
-    processors: [] as TemplateProcessor[],
-    sources: [] as ITemplateSource[],
   };
 
   /**
@@ -49,11 +55,12 @@ export class Template {
    * Adds a new template source (pointer to it's directory/files).
    */
   public add(source: ITemplateSource | Template) {
-    this.config.sources =
+    const sources =
       source instanceof Template
         ? [...this.sources, ...source.sources]
         : [...this.sources, source];
-    return this;
+    const processors = this.config.processors;
+    return new Template({ sources, processors });
   }
 
   /**
