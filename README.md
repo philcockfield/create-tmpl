@@ -20,10 +20,10 @@ Add simple `transformer` functions to the pipeline to precisely customize each f
 ### Philosophy
 The [best programmers are lazy](http://threevirtues.com). If you do anything more than three times, it might be a **good idea to automate it** 🤖.
 
-The `create-tmpl` module is designed to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort that you're more likely to do it than not.  Design principles include:
+The `create-tmpl` module is here to make creating repeatable scaffolding through templates painless, powerful and low-effort.  So low effort that you're more likely to do it than not.  Design principles:
 
 - Simple configuration (or "no-configuration").
-- Powerful CLI for direct use.
+- Powerful CLI that's fun to use.
 - Elegant and extensible API when integrating into another module.
 
 ---
