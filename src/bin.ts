@@ -14,6 +14,7 @@ process.on('unhandledRejection', err => {
 
 const CMD = {
   LIST: 'list',
+  LS: 'ls',
 };
 const CMDS = Object.keys(CMD).map(key => CMD[key]);
 
@@ -25,14 +26,14 @@ const SCRIPT = log.magenta('tmpl');
 const COMMAND = log.cyan('<command>');
 const OPTIONS = log.gray('[options]');
 const program = yargs
-  .scriptName(SCRIPT)
+  .scriptName('')
   .usage(`${'Usage:'} ${SCRIPT} ${COMMAND} ${OPTIONS}`)
 
   /**
    * `init`
    */
   .command(
-    log.cyan(CMD.LIST),
+    [CMD.LIST, CMD.LS],
     'Lists the available templates',
     e => e,
     // e.option('force', {
@@ -46,7 +47,6 @@ const program = yargs
       return;
     },
   )
-  .alias('ls', 'list')
 
   .help('h')
   .alias('h', 'help')

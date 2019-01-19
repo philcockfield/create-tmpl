@@ -90,10 +90,11 @@ YAML...
 
 ## 🌳 API
 Concepts:
-1. Composition
+1. Template composition
 2. Filters
-3. Transformers
-4. Writers
+3. Processors
+   -  Transforming
+   -  Writing
 
 ...
 
