@@ -33,7 +33,10 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 - [Useful, Usable, Used](http://wiki.c2.com/?UsefulUsableUsed)
 
 
+<p>&nbsp;</p>
 ---
+<p>&nbsp;</p>
+
 
 
 ## 🌳 CLI
@@ -79,14 +82,16 @@ then invoke it from `scripts` within your `package.json` like so:
 ---
 
 ### Configuration
-YAML...
+YAML...TDB
 
 ---
 
 ### Commands
-...
+...TDB
 
+<p>&nbsp;</p>
 ---
+<p>&nbsp;</p>
 
 ## 🌳 API
 Concepts:
@@ -97,7 +102,14 @@ Concepts:
 ...
 
 
+<p>&nbsp;</p>
+---
+<p>&nbsp;</p>
+
 ## TODO
 - [ ] processor (pre-canned)
   - [ ] writeFile
 - [ ] CLI
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
