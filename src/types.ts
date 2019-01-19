@@ -17,6 +17,11 @@ export type ITemplateFile = {
 };
 
 /**
+ * Represents a set of custom values passed in to a template.
+ */
+export type ITemplateVariables = { [key: string]: any };
+
+/**
  * Filter.
  */
 export type TemplateFilter = (file: ITemplateFile) => boolean;
@@ -24,24 +29,26 @@ export type TemplateFilter = (file: ITemplateFile) => boolean;
 /**
  * Processor.
  */
-export type TemplateProcessor = (
-  req: IProcessRequest,
-  res: IProcessResponse,
+export type TemplateProcessor<V extends ITemplateVariables = {}> = (
+  req: IProcessTemplateRequest<V>,
+  res: IProcessTemplateResponse,
 ) => any | Promise<any>;
 
-export type IProcessRequest = {
+export type IProcessTemplateRequest<V extends ITemplateVariables = {}> = {
   path: string;
   buffer: Buffer;
   text?: string;
+  variables: V;
 };
-export type IProcessResponse = {
-  text: (text: string) => IProcessResponse;
+
+export type IProcessTemplateResponse = {
+  text: (text: string) => IProcessTemplateResponse;
   replaceText: (
     searchValue: {
       [Symbol.replace](string: string, replaceValue: string): string;
     },
     replaceValue: string,
-  ) => IProcessResponse;
+  ) => IProcessTemplateResponse;
   next: () => void;
   complete: () => void;
 };

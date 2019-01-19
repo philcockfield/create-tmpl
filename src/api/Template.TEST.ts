@@ -187,10 +187,12 @@ describe('TemplatePlan', () => {
     });
 
     it('change => write', async () => {
+      type IMyVariables = { greeting: string };
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create({ dir: './example/tmpl-2' })
-        .process((req, res) => {
-          res.replaceText(/__FOO__/g, 'Hello').next();
+        .process<IMyVariables>((req, res) => {
+          res.replaceText(/__GREETING__/g, req.variables.greeting);
+          res.next();
         })
         .process(async (req, res) => {
           const path = fsPath.join(dir, req.path);
@@ -199,7 +201,7 @@ describe('TemplatePlan', () => {
           res.complete();
         });
 
-      await tmpl.execute();
+      await tmpl.execute<IMyVariables>({ variables: { greeting: 'Hello!' } });
 
       const file = {
         indexJs: await fs.readFile(fsPath.join(dir, 'index.js'), 'utf8'),
@@ -208,7 +210,7 @@ describe('TemplatePlan', () => {
       const isBlueprintBinary = await isBinaryFile(
         fsPath.join(dir, 'blueprint.png'),
       );
-      expect(file.indexJs).to.include(`console.log('Hello');`);
+      expect(file.indexJs).to.include(`console.log('Hello!');`);
       expect(file.readme).to.include(`# tmpl-2`);
       expect(isBlueprintBinary).to.eql(true);
     });

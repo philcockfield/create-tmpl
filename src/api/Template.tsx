@@ -1,12 +1,13 @@
 import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
-  IProcessResponse,
+  IProcessTemplateResponse,
   ITemplateFile,
   ITemplateSource,
   TemplateProcessor,
   TemplateFilter,
+  ITemplateVariables,
 } from '../types';
-import { Request } from './Request';
+import { TemplateRequest } from './TemplateRequest';
 
 export type ITemplateArgs = {
   sources?: ITemplateSource[];
@@ -90,7 +91,7 @@ export class Template {
   /**
    * Register a template processor.
    */
-  public process(fn: TemplateProcessor) {
+  public process<V extends ITemplateVariables = {}>(fn: TemplateProcessor<V>) {
     const processors = [...this.config.processors, fn];
     return this.clone({ processors });
   }
@@ -137,8 +138,13 @@ export class Template {
   /**
    * Runs the execution pipeline.
    */
-  public async execute(args: { cache?: boolean } = {}) {
-    const { cache } = args;
+  public async execute<V extends ITemplateVariables = {}>(
+    args: {
+      variables?: V;
+      cache?: boolean;
+    } = {},
+  ) {
+    const { cache, variables = {} } = args;
     const processors = this.config.processors;
     if (processors.length === 0) {
       return;
@@ -146,7 +152,9 @@ export class Template {
 
     // Run the processor pipe-line.
     const files = await this.files({ cache });
-    const wait = files.map(file => runProcessors({ processors, file }));
+    const wait = files.map(file =>
+      runProcessors({ processors, file, variables }),
+    );
 
     // Finish up.
     await Promise.all(wait);
@@ -177,11 +185,12 @@ async function getFiles(source: ITemplateSource) {
 }
 
 function runProcessors(args: {
+  variables: ITemplateVariables;
   processors: TemplateProcessor[];
   file: ITemplateFile;
 }) {
   return new Promise(async (resolve, reject) => {
-    const { processors, file } = args;
+    const { processors, file, variables } = args;
     let isResolved = false;
 
     try {
@@ -195,7 +204,7 @@ function runProcessors(args: {
       const buffer = await fs.readFile(fsPath.join(file.base, file.path));
       let text = file.isBinary ? undefined : buffer.toString();
 
-      const res: IProcessResponse = {
+      const res: IProcessTemplateResponse = {
         next: () => runNext(),
         complete: () => done(),
 
@@ -220,7 +229,7 @@ function runProcessors(args: {
         }
         const path = file.path;
         const content = text || buffer;
-        const req = new Request({ path, content });
+        const req = new TemplateRequest({ path, content, variables });
         fn(req, res);
       };
 
