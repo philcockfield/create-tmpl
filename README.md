@@ -170,7 +170,7 @@ const template = tmpl
 <p>&nbsp;</p>
 
 ### Execution
-We now have a configured template that will transform text files and save to disk when executed.  Let's execute it:
+We now have a configured template that will transform text files and save them to disk when executed.  Let's execute it:
 
 ```typescript
 await template.execute()
