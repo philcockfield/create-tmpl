@@ -99,15 +99,15 @@ YAML...TDB
 
 ## 🌳 API
 Working with a `Template` moves through three steps:
-1. Template [composition](#Composition)
+1. Template [composition](#Composition (add source files))
 2. Filters and processors
 3. Execution
 
-Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template`.  Conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs).
+Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template` (conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs)).
 
 <p>&nbsp;</p>  
 
-#### Composition (add source files)
+### Composition (add source files)
 A template is composed of one or more file locations consisting of a directory and an optional [glob](https://en.wikipedia.org/wiki/Glob_(programming)) pattern.  Template files that are added later with the same paths will override earlier paths.
 
 ```typesript
