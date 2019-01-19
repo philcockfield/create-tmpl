@@ -14,7 +14,7 @@ process.on('unhandledRejection', err => {
 
 const CMD = {
   LIST: 'list',
-  LS: 'ls',
+  LIST_LS: 'ls',
 };
 const CMDS = Object.keys(CMD).map(key => CMD[key]);
 
@@ -33,7 +33,7 @@ const program = yargs
    * `init`
    */
   .command(
-    [CMD.LIST, CMD.LS],
+    [CMD.LIST, CMD.LIST_LS],
     'Lists the available templates',
     e => e,
     // e.option('force', {
