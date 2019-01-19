@@ -70,4 +70,10 @@ then invoke it from `scripts` within your `package.json` like so:
 ...
 
 ## API
+Concepts:
+1. Composition
+2. Filters
+3. Transformers
+4. Writers
+
 ...
