@@ -43,8 +43,9 @@ export type IProcessTemplateRequest<V extends ITemplateVariables = {}> = {
 };
 
 export type IProcessTemplateResponse = {
-  text: (text: string) => IProcessTemplateResponse;
+  text: string | undefined;
   replaceText: (
+    // NB: Taken from the [lib.dom.d.ts] types.
     searchValue: {
       [Symbol.replace](string: string, replaceValue: string): string;
     },

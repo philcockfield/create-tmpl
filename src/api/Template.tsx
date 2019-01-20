@@ -224,9 +224,8 @@ function runProcessors(args: {
         next: () => runNext(),
         complete: () => done(),
 
-        text(change: string) {
-          text = change;
-          return res;
+        get text() {
+          return text;
         },
 
         replaceText(searchValue, replaceValue) {
