@@ -3,9 +3,10 @@ import {
   IProcessTemplateResponse,
   ITemplateFile,
   ITemplateSource,
-  TemplateProcessor,
   TemplateFilter,
-  ITemplateVariables,
+  IVariables,
+  TemplateProcessor,
+  TemplatePathFilter,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
@@ -21,6 +22,10 @@ export type ITemplateArgs = {
   sources?: ITemplateSource[];
   filters?: TemplateFilter[];
   processors?: TemplateProcessor[];
+};
+
+export type ProcessorFunc<V extends IVariables = {}> = TemplateProcessor<V> & {
+  pathFilters?: TemplatePathFilter[];
 };
 
 /**
@@ -60,7 +65,7 @@ export class Template {
    * Internal configuration.
    */
   private readonly config = {
-    processors: [] as TemplateProcessor[],
+    processors: [] as ProcessorFunc[],
     sources: [] as ITemplateSource[],
     filters: [] as TemplateFilter[],
     cache: {
@@ -107,7 +112,35 @@ export class Template {
   /**
    * Register a template processor.
    */
-  public process<V extends ITemplateVariables = {}>(fn: TemplateProcessor<V>) {
+  public process<V extends IVariables = {}>(fn: TemplateProcessor<V>): Template;
+
+  /**
+   * Register a template processor with a path filter.
+   */
+  public process<V extends IVariables = {}>(
+    pathFilter: TemplatePathFilter | TemplatePathFilter[],
+    fn: TemplateProcessor<V>,
+  ): Template;
+
+  /**
+   * Register a template processor (implementation).
+   */
+  public process(arg1: any, arg2?: any) {
+    // Wrangle the processor function.
+    const fn: ProcessorFunc = typeof arg2 === 'function' ? arg2 : arg1;
+    if (!fn) {
+      throw new Error(`A template processor function must be specified`);
+    }
+
+    // Build the list of filters (may be none).
+    let pathFilter: TemplatePathFilter[] = [];
+    if (arg1 instanceof RegExp || Array.isArray(arg1)) {
+      const list: TemplatePathFilter[] = Array.isArray(arg1) ? arg1 : [arg1];
+      pathFilter = list.filter(filter => filter instanceof RegExp);
+    }
+    fn.pathFilters = pathFilter;
+
+    // Add to list.
     const processors = [...this.config.processors, fn];
     return this.clone({ processors });
   }
@@ -154,7 +187,7 @@ export class Template {
   /**
    * Runs the execution pipeline.
    */
-  public async execute<V extends ITemplateVariables = {}>(
+  public async execute<V extends IVariables = {}>(
     args: {
       variables?: V;
       cache?: boolean;
@@ -219,8 +252,8 @@ async function getFiles(source: ITemplateSource) {
 }
 
 function runProcessors(args: {
-  variables: ITemplateVariables;
-  processors: TemplateProcessor[];
+  variables: IVariables;
+  processors: ProcessorFunc[];
   file: ITemplateFile;
 }) {
   return new Promise(async (resolve, reject) => {
@@ -262,6 +295,17 @@ function runProcessors(args: {
         }
         const path = file.path;
         const content = text || buffer;
+
+        // If filters exist, ensure the path is a match.
+        const filters = fn.pathFilters || [];
+        if (filters.length > 0) {
+          const isMatch = filters.some(filter => filter.test(path));
+          if (!isMatch) {
+            return runNext();
+          }
+        }
+
+        // Invoke the handler.
         const req = new TemplateRequest({ path, content, variables });
         fn(req, res);
       };

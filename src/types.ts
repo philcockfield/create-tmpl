@@ -18,7 +18,7 @@ export type ITemplateFile = {
 /**
  * Represents a set of custom values passed in to a template.
  */
-export type ITemplateVariables = { [key: string]: any };
+export type IVariables = { [key: string]: any };
 
 /**
  * Filter.
@@ -28,12 +28,16 @@ export type TemplateFilter = (file: ITemplateFile) => boolean;
 /**
  * Processor.
  */
-export type TemplateProcessor<V extends ITemplateVariables = {}> = (
+export type TemplateProcessor<V extends IVariables = {}> = (
   req: IProcessTemplateRequest<V>,
   res: IProcessTemplateResponse,
 ) => any | Promise<any>;
+export type TemplatePathFilter = RegExp;
 
-export type IProcessTemplateRequest<V extends ITemplateVariables = {}> = {
+/**
+ * Processor: Request
+ */
+export type IProcessTemplateRequest<V extends IVariables = {}> = {
   path: string;
   buffer: Buffer;
   text?: string;
@@ -41,15 +45,20 @@ export type IProcessTemplateRequest<V extends ITemplateVariables = {}> = {
   variables: V;
 };
 
+/**
+ * Processor: Response
+ */
 export type IProcessTemplateResponse = {
   text: string | undefined;
-  replaceText: (
-    // NB: Taken from the [lib.dom.d.ts] types.
-    searchValue: {
-      [Symbol.replace](string: string, replaceValue: string): string;
-    },
-    replaceValue: string,
-  ) => IProcessTemplateResponse;
+  replaceText: ReplaceTemplateText;
   next: () => void;
   complete: () => void;
 };
+
+// NB: Taken from the [lib.dom.d.ts] types.
+export type ReplaceTemplateText = (
+  searchValue: {
+    [Symbol.replace](string: string, replaceValue: string): string;
+  },
+  replaceValue: string,
+) => IProcessTemplateResponse;

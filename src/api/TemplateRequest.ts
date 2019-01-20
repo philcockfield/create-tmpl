@@ -1,4 +1,4 @@
-import { IProcessTemplateRequest, ITemplateVariables } from '../types';
+import { IProcessTemplateRequest, IVariables } from '../types';
 
 /**
  * A request that is passed to a processor.
@@ -6,12 +6,12 @@ import { IProcessTemplateRequest, ITemplateVariables } from '../types';
 export class TemplateRequest implements IProcessTemplateRequest {
   private readonly content: Buffer | string;
   public readonly path: string;
-  public readonly variables: ITemplateVariables;
+  public readonly variables: IVariables;
 
   constructor(args: {
     path: string;
     content: Buffer | string;
-    variables: ITemplateVariables;
+    variables: IVariables;
   }) {
     const { path, content, variables } = args;
     this.path = path;
