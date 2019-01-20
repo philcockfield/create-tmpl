@@ -182,7 +182,7 @@ Middleware is executed in the order that it is added to the pipeline.  Call `res
 
 ### Execution
 We now have a configured template that will transform text files and save them to disk when executed.  
-Let's execute it:
+Let's execute it passing in some variables:
 
 ```typescript
 const variables: IMyVariables = { greeting: 'Hello!' };
