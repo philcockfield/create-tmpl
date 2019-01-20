@@ -38,6 +38,7 @@ export type IProcessTemplateRequest<V extends ITemplateVariables = {}> = {
   path: string;
   buffer: Buffer;
   text?: string;
+  isBinary: boolean;
   variables: V;
 };
 

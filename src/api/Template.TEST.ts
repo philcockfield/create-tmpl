@@ -213,10 +213,18 @@ describe('TemplatePlan', () => {
     });
 
     it('change => write', async () => {
+      // let text
       type IMyVariables = { greeting: string };
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create({ dir: './example/tmpl-2' })
         .process<IMyVariables>((req, res) => {
+          if (!req.isBinary) {
+            expect(typeof req.text).to.eql('string');
+          }
+          if (req.isBinary) {
+            expect(req.text).to.eql(undefined);
+          }
+
           res.replaceText(/__GREETING__/g, req.variables.greeting);
           res.next();
         })
