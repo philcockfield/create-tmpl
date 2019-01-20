@@ -190,7 +190,6 @@ async function getFiles(source: ITemplateSource) {
 
   const toFile = async (path: string) => {
     const file: ITemplateFile = {
-      source,
       base,
       path: path.substr(base.length),
       isBinary: await isBinaryFile(path),

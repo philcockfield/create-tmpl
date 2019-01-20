@@ -10,7 +10,6 @@ export type ITemplateSource = {
  * Represents a single template file.
  */
 export type ITemplateFile = {
-  source: ITemplateSource;
   base: string;
   path: string;
   isBinary: boolean;

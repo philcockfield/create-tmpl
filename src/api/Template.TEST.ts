@@ -140,7 +140,6 @@ describe('TemplatePlan', () => {
       const file = files[0];
 
       expect(files.length).to.eql(1);
-      expect(file.source).to.eql(source);
       expect(file.base).to.eql(fsPath.resolve(source.dir));
       expect(file.path).to.eql('/README.md');
     });
