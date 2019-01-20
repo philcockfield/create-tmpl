@@ -182,13 +182,13 @@ export class Template {
  */
 async function getFiles(source: ITemplateSource) {
   const { dir, pattern = '**' } = source;
-  const base = fsPath.resolve(dir);
-  const path = fsPath.join(base, pattern);
-  const paths = await glob.find(fsPath.resolve(path), {
-    type: 'FILES',
-    dot: true,
-  });
-  const wait = paths.map(async path => {
+  let base = fsPath.resolve(dir);
+
+  if (!(await fs.pathExists(base))) {
+    return [];
+  }
+
+  const toFile = async (path: string) => {
     const file: ITemplateFile = {
       source,
       base,
@@ -196,7 +196,26 @@ async function getFiles(source: ITemplateSource) {
       isBinary: await isBinaryFile(path),
     };
     return file;
+  };
+
+  // Check whether a single-file has been specified.
+  const stats = await fs.lstat(base);
+  if (stats.isFile()) {
+    const file = fsPath.basename(base);
+    base = fsPath.dirname(base);
+    const path = fsPath.join(base, file);
+    return [await toFile(path)];
+  }
+
+  // Look up the glob pattern.
+  const path = fsPath.join(base, pattern);
+  const paths = await glob.find(fsPath.resolve(path), {
+    type: 'FILES',
+    dot: true,
   });
+  const wait = paths.map(path => toFile(path));
+
+  // Finish up.
   return Promise.all(wait);
 }
 

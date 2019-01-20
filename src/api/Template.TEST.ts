@@ -29,8 +29,15 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-2/foo', pattern: '*.ts' },
       ];
       const tmpl = Template.create(sources);
-      expect(tmpl.sources.length).to.eql(2);
       expect(tmpl.sources).to.eql(sources);
+    });
+
+    it('takes sources within `create` method as simple strings (array)', () => {
+      const tmpl = Template.create(['./tmpl-1', './tmpl-2/foo']);
+      expect(tmpl.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2/foo' },
+      ]);
     });
   });
 
@@ -157,6 +164,13 @@ describe('TemplatePlan', () => {
       const files = await tmpl.files();
       const paths = files.map(f => f.path);
       expect(paths).to.eql(['/index.ts', '/src/index.ts']);
+    });
+
+    it('converts a `dir` that is a file-path to a {dir, pattern}', async () => {
+      const tmpl = Template.create({ dir: './example/tmpl-1/README.md' });
+      const files = await tmpl.files();
+      expect(files.length).to.eql(1);
+      expect(files[0].path).to.eql('/README.md');
     });
 
     it('caches results', async () => {
