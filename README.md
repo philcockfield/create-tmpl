@@ -27,8 +27,9 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 - Lean on the file-system.
 - Simple [configuration](Configuration) (or "no-configuration").
 - Beautiful [command-line](#CLI) that's fast and fun to use.
-- Elegant and extensible [API](#API) for integrating into other modules.
-- Pluggable [middleware](#Middleware) pipeline (composability).
+- Powerful composability of source files (assemble base template and then make overriding variants).
+- Elegant [API](#API) for integrating into other modules.
+- Pluggable [middleware](#Middleware) pipeline for extensibility.
 
 #### Maxims
 - [Rule of Three](http://wiki.c2.com/?RuleOfThree) | [Three Strikes And You Automate](http://wiki.c2.com/?ThreeStrikesAndYouAutomate)
