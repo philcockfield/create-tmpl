@@ -85,7 +85,7 @@ describe('TemplatePlan', () => {
       ]);
     });
 
-    it('merges multiple [tmpl]\'s', () => {
+    it('merges multiple [tmpl] items', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = Template.create(['./tmpl-2', './tmpl-4']);
       const tmpl3 = Template.create().add('./tmpl-3');
@@ -221,7 +221,7 @@ describe('TemplatePlan', () => {
   describe('processors', () => {
     it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
-      const tmpl2 = tmpl1.process((req, res) => true);
+      const tmpl2 = tmpl1.use((req, res) => true);
       expect(tmpl1).to.not.equal(tmpl2);
     });
 
@@ -231,7 +231,7 @@ describe('TemplatePlan', () => {
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create()
         .add({ dir: './example/tmpl-2' })
-        .process<IMyVariables>((req, res) => {
+        .use<IMyVariables>((req, res) => {
           if (!req.isBinary) {
             expect(typeof req.text).to.eql('string');
           }
@@ -241,7 +241,7 @@ describe('TemplatePlan', () => {
           res.replaceText(/__GREETING__/g, req.variables.greeting);
           res.next();
         })
-        .process(async (req, res) => {
+        .use(async (req, res) => {
           const path = fsPath.join(dir, req.path);
           await fs.ensureDir(dir);
           await fs.writeFile(path, req.buffer);
@@ -266,7 +266,7 @@ describe('TemplatePlan', () => {
       let paths: string[] = [];
       const tmpl = Template.create()
         .add('./example/tmpl-1')
-        .process(/\.ts$/, (req, res) => {
+        .use(/\.ts$/, (req, res) => {
           paths = [...paths, req.path];
           res.next();
         });

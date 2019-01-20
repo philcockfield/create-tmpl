@@ -1,9 +1,9 @@
-import { IProcessTemplateRequest, IVariables } from '../types';
+import { ITemplateRequest, IVariables } from '../types';
 
 /**
  * A request that is passed to a processor.
  */
-export class TemplateRequest implements IProcessTemplateRequest {
+export class TemplateRequest implements ITemplateRequest {
   private readonly content: Buffer | string;
   public readonly path: string;
   public readonly variables: IVariables;

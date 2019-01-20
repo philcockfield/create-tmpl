@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as template from '.';
-import { Template } from './api';
+import { Template } from './Template';
 
 describe('entry-point', () => {
   it('creates a [Template]', async () => {
