@@ -87,12 +87,12 @@ then invoke it from `scripts` within your `package.json` like so:
 ---
 
 ### Configuration
-YAML...TDB
+...`TDB`
 
 ---
 
 ### Commands
-...TDB
+...`TDB`
 
 <p>&nbsp;</p>  
 
