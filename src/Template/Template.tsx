@@ -10,7 +10,7 @@ import {
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
-export type TemplateSourceArg =
+export type SourceTemplateArg =
   | ITemplateSource
   | ITemplateSource[]
   | Template
@@ -35,7 +35,7 @@ export class Template {
   /**
    * Creates a new template-plan.
    */
-  public static create(source?: TemplateSourceArg) {
+  public static create(source?: SourceTemplateArg) {
     const tmpl = new Template({});
     return source ? tmpl.add(source) : tmpl;
   }
@@ -83,7 +83,7 @@ export class Template {
   /**
    * Adds a new template source (pointer to it's directory/files).
    */
-  public add(source: TemplateSourceArg) {
+  public add(source: SourceTemplateArg) {
     let sources: ITemplateSource[] = [...this.sources];
 
     const list = Array.isArray(source) ? source : [source];
