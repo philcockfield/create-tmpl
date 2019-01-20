@@ -105,7 +105,7 @@ then invoke it from `scripts` within your `package.json` like so:
 
 Working with a `Template` moves through three stages:
 1. Template [composition](#Composition (add source files))
-2. [Filters](#Filtering) and [middleware](#Middleware) template processors.
+2. [Filters](#Filtering) and [middleware](#Middleware) processors.
 3. Execution
 Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` methods return a new instance of the `Template` (conceptually similar to [rx  ](https://github.com/ReactiveX/rxjs)).
 
