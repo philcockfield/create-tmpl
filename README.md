@@ -105,8 +105,9 @@ then invoke it from `scripts` within your `package.json` like so:
 
 Working with a `Template` moves through three stages:
 1. Template [composition](#Composition (add source files))
-2. [Filters](#Filtering) and [middleware](#Middleware) processors.
+2. [Filters](#Filtering) and [middleware processors](#Middleware).
 3. Execution
+
 Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` methods return a new instance of the `Template` (conceptually similar to [rx  ](https://github.com/ReactiveX/rxjs)).
 
 
@@ -175,7 +176,7 @@ const tmpl = template
   });
 ```
 
-Middlware is executed in the order that it is added to the pipeline.
+Middleware is executed in the order that it is added to the pipeline.  Call `res.next()` to move to the next middleware in the pipeline, or call `res.complete()` when done, and the execution pipeline finished.
 
 <p>&nbsp;</p>
 
