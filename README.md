@@ -96,10 +96,12 @@ YAML...TDB
 
 <p>&nbsp;</p>  
 
----
+
+![virtues](https://user-images.githubusercontent.com/185555/51444509-5c58d380-1d5d-11e9-84e1-05dd5217f396.png)
 
 <p>&nbsp;</p>
-## 🌳API
+
+## 🌳 API
 
 Working with a `Template` moves through three stages:
 1. Template [composition](#Composition (add source files))
