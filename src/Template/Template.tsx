@@ -1,11 +1,11 @@
 import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
-  IProcessTemplateResponse,
+  ITemplateResponse,
   ITemplateFile,
   ITemplateSource,
   TemplateFilter,
   IVariables,
-  TemplateProcessor,
+  TemplateMiddleware,
   TemplatePathFilter,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
@@ -21,10 +21,10 @@ export type AddTemplateSource =
 export type ITemplateArgs = {
   sources?: ITemplateSource[];
   filters?: TemplateFilter[];
-  processors?: TemplateProcessor[];
+  processors?: TemplateMiddleware[];
 };
 
-export type ProcessorFunc<V extends IVariables = {}> = TemplateProcessor<V> & {
+export type Handler<V extends IVariables = {}> = TemplateMiddleware<V> & {
   pathFilters?: TemplatePathFilter[];
 };
 
@@ -65,7 +65,7 @@ export class Template {
    * Internal configuration.
    */
   private readonly config = {
-    processors: [] as ProcessorFunc[],
+    processors: [] as Handler[],
     sources: [] as ITemplateSource[],
     filters: [] as TemplateFilter[],
     cache: {
@@ -112,27 +112,27 @@ export class Template {
   /**
    * Register a template processor.
    */
-  public process<V extends IVariables = {}>(fn: TemplateProcessor<V>): Template;
+  public use<V extends IVariables = {}>(fn: TemplateMiddleware<V>): Template;
 
   /**
    * Register a template processor with a path filter.
    */
-  public process<V extends IVariables = {}>(
+  public use<V extends IVariables = {}>(
     pathFilter: TemplatePathFilter | TemplatePathFilter[],
-    fn: TemplateProcessor<V>,
+    fn: TemplateMiddleware<V>,
   ): Template;
 
   /**
    * Register a template processor (implementation).
    */
-  public process(arg1: any, arg2?: any) {
+  public use(arg1: any, arg2?: any): Template {
     // Wrangle the processor function.
-    const fn: ProcessorFunc = typeof arg2 === 'function' ? arg2 : arg1;
+    const fn: Handler = typeof arg2 === 'function' ? arg2 : arg1;
     if (!fn) {
       throw new Error(`A template processor function must be specified`);
     }
 
-    // Build the list of filters (may be none).
+    // Build the list of path-filters (may be none).
     let pathFilter: TemplatePathFilter[] = [];
     if (arg1 instanceof RegExp || Array.isArray(arg1)) {
       const list: TemplatePathFilter[] = Array.isArray(arg1) ? arg1 : [arg1];
@@ -253,7 +253,7 @@ async function getFiles(source: ITemplateSource) {
 
 function runProcessors(args: {
   variables: IVariables;
-  processors: ProcessorFunc[];
+  processors: Handler[];
   file: ITemplateFile;
 }) {
   return new Promise(async (resolve, reject) => {
@@ -271,7 +271,7 @@ function runProcessors(args: {
       const buffer = await fs.readFile(fsPath.join(file.base, file.path));
       let text = file.isBinary ? undefined : buffer.toString();
 
-      const res: IProcessTemplateResponse = {
+      const res: ITemplateResponse = {
         next: () => runNext(),
         complete: () => done(),
 

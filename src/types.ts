@@ -26,18 +26,18 @@ export type IVariables = { [key: string]: any };
 export type TemplateFilter = (file: ITemplateFile) => boolean;
 
 /**
- * Processor.
+ * Middleware.
  */
-export type TemplateProcessor<V extends IVariables = {}> = (
-  req: IProcessTemplateRequest<V>,
-  res: IProcessTemplateResponse,
+export type TemplateMiddleware<V extends IVariables = {}> = (
+  req: ITemplateRequest<V>,
+  res: ITemplateResponse,
 ) => any | Promise<any>;
 export type TemplatePathFilter = RegExp;
 
 /**
- * Processor: Request
+ * Middleware: [Request]
  */
-export type IProcessTemplateRequest<V extends IVariables = {}> = {
+export type ITemplateRequest<V extends IVariables = {}> = {
   path: string;
   buffer: Buffer;
   text?: string;
@@ -46,9 +46,9 @@ export type IProcessTemplateRequest<V extends IVariables = {}> = {
 };
 
 /**
- * Processor: Response
+ * Middleware: [Response]
  */
-export type IProcessTemplateResponse = {
+export type ITemplateResponse = {
   text: string | undefined;
   replaceText: ReplaceTemplateText;
   next: () => void;
@@ -61,4 +61,4 @@ export type ReplaceTemplateText = (
     [Symbol.replace](string: string, replaceValue: string): string;
   },
   replaceValue: string,
-) => IProcessTemplateResponse;
+) => ITemplateResponse;
