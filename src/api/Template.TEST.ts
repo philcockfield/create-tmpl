@@ -29,8 +29,15 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-2/foo', pattern: '*.ts' },
       ];
       const tmpl = Template.create(sources);
-      expect(tmpl.sources.length).to.eql(2);
       expect(tmpl.sources).to.eql(sources);
+    });
+
+    it('takes sources within `create` method as simple strings (array)', () => {
+      const tmpl = Template.create(['./tmpl-1', './tmpl-2/foo']);
+      expect(tmpl.sources).to.eql([
+        { dir: './tmpl-1' },
+        { dir: './tmpl-2/foo' },
+      ]);
     });
   });
 
@@ -133,7 +140,6 @@ describe('TemplatePlan', () => {
       const file = files[0];
 
       expect(files.length).to.eql(1);
-      expect(file.source).to.eql(source);
       expect(file.base).to.eql(fsPath.resolve(source.dir));
       expect(file.path).to.eql('/README.md');
     });
@@ -157,6 +163,13 @@ describe('TemplatePlan', () => {
       const files = await tmpl.files();
       const paths = files.map(f => f.path);
       expect(paths).to.eql(['/index.ts', '/src/index.ts']);
+    });
+
+    it('converts a `dir` that is a file-path to a {dir, pattern}', async () => {
+      const tmpl = Template.create({ dir: './example/tmpl-1/README.md' });
+      const files = await tmpl.files();
+      expect(files.length).to.eql(1);
+      expect(files[0].path).to.eql('/README.md');
     });
 
     it('caches results', async () => {
@@ -212,11 +225,12 @@ describe('TemplatePlan', () => {
       expect(tmpl1).to.not.equal(tmpl2);
     });
 
-    it('change => write', async () => {
+    it('process: change => write', async () => {
       // let text
       type IMyVariables = { greeting: string };
       const dir = fsPath.resolve(TEST_DIR);
-      const tmpl = Template.create({ dir: './example/tmpl-2' })
+      const tmpl = Template.create()
+        .add({ dir: './example/tmpl-2' })
         .process<IMyVariables>((req, res) => {
           if (!req.isBinary) {
             expect(typeof req.text).to.eql('string');
@@ -224,7 +238,6 @@ describe('TemplatePlan', () => {
           if (req.isBinary) {
             expect(req.text).to.eql(undefined);
           }
-
           res.replaceText(/__GREETING__/g, req.variables.greeting);
           res.next();
         })
@@ -247,6 +260,18 @@ describe('TemplatePlan', () => {
       expect(file.indexJs).to.include(`console.log('Hello!');`);
       expect(file.readme).to.include(`# tmpl-2`);
       expect(isBlueprintBinary).to.eql(true);
+    });
+
+    it('process: with path filter', async () => {
+      let paths: string[] = [];
+      const tmpl = Template.create()
+        .add('./example/tmpl-1')
+        .process(/\.ts$/, (req, res) => {
+          paths = [...paths, req.path];
+          res.next();
+        });
+      await tmpl.execute();
+      expect(paths).to.eql(['/index.ts', '/src/index.ts']);
     });
   });
 });
