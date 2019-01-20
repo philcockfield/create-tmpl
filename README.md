@@ -10,7 +10,7 @@ Think of it as your scaffolding superpower.
 ### Introduction
 Compose directories and files together with [glob](https://en.wikipedia.org/wiki/Glob_(programming)) patterns into a powerful `tmpl` that can be copied anywhere...to the file-system, to memory, wherever.
 
-Add simple `processor` functions to the pipeline to precisely customize each file as it is written, taking variable arguments (via the [API](#API)) or values entered by the user (via the [command-line](#CLI)).
+Add simple `middleware` functions to the pipeline to precisely customize each file as it is written, taking variable arguments (via the [API](#API)) or values entered by the user (via the [command-line](#CLI)).
 
 #### Interfaces
 
@@ -28,6 +28,7 @@ The `create-tmpl` module is here to make creating repeatable scaffolding through
 - Simple [configuration](Configuration) (or "no-configuration").
 - Beautiful [command-line](#CLI) that's fast and fun to use.
 - Elegant and extensible [API](#API) for integrating into other modules.
+- Pluggable [middleware](#Middleware) pipeline (composability).
 
 #### Maxims
 - [Rule of Three](http://wiki.c2.com/?RuleOfThree) | [Three Strikes And You Automate](http://wiki.c2.com/?ThreeStrikesAndYouAutomate)
@@ -98,14 +99,14 @@ YAML...TDB
 ---
 
 <p>&nbsp;</p>
+## 🌳API
 
-## 🌳 API
 Working with a `Template` moves through three stages:
 1. Template [composition](#Composition (add source files))
-2. [Filters](#Filtering) and [processors](#Processors)
+2. [Filters](#Filtering) and [middleware](#Middleware) template processors.
 3. Execution
+Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` methods return a new instance of the `Template` (conceptually similar to [rx  ](https://github.com/ReactiveX/rxjs)).
 
-Templates are immutable, meaning any calls to the `.add`, `.filter`, `.process` methods return a new instance of the `Template` (conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs)).
 
 <p>&nbsp;</p>  
 
@@ -142,8 +143,8 @@ const files = await markdown.files(); // Now only markdown files.
 
 <p>&nbsp;</p>
 
-### Processors
-A pipeline of processors provide the mechanism for transforming templates and saving them to the file-system, or wherever you need to send the execution result.  Processors are conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
+### Middleware
+A pipeline of middleware functions provide the mechanism for transforming templates and saving them to the file-system, or wherever you need to send the execution result.  Template middleware is conceptually equivalent to [express middleware](https://expressjs.com/en/guide/using-middleware.html):
 
 ```typescript
 import { template, path, fs } from 'create-tmpl'
@@ -154,23 +155,25 @@ const tmpl = template
   .add({ dir: './tmpl-1' })
   .add({ dir: './tmpl-2' })
 
-  .process<IMyVariables>((req, res) => {
-    // Transform the text content of files (naive example 🤭 ).
+  // Transform the text content of files (naive example 🤭 ).
+  .use<IMyVariables>((req, res) => {
     res
       .replaceText(/__GREETING__/g, req.variables.greeting)
-      .next(); // Signal to move to next processor.
+      .next(); // Signal to move to next middleware.
   })
 
-  .process(async (req, res) => {
-    // Save the file to disk.
+  // Save the file to disk.
+  .use(async (req, res) => {
     const dir = path.resolve('./output')
     await fs.ensureDir(dir);
     await fs.writeFile(path.join(dir, req.path), req.buffer);
 
-    // Signal the operation is complete (no more processors will run).
+    // Signal the operation is complete (no more middleware will run).
     res.complete(); 
   });
 ```
+
+Middlware is executed in the order that it is added to the pipeline.
 
 <p>&nbsp;</p>
 
