@@ -1,3 +1,5 @@
+export * from './common/npm/types';
+
 /**
  * The source location of template file(s).
  */
