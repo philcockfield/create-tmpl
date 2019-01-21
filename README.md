@@ -98,7 +98,7 @@ then invoke it from `scripts` within your `package.json` like so:
 <p>&nbsp;</p>  
 
 
-![virtues](https://user-images.githubusercontent.com/185555/51444509-5c58d380-1d5d-11e9-84e1-05dd5217f396.png)
+![Virtues](https://user-images.githubusercontent.com/185555/51451491-6a791500-1d9a-11e9-9695-27f185325104.png)
 
 <p>&nbsp;</p>
 
