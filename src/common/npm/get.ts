@@ -3,7 +3,6 @@ import * as exec from '../util.exec';
 import { INpmInfo } from './types';
 export * from './types';
 
-
 /**
  * Lookup latest info for module from NPM.
  */
