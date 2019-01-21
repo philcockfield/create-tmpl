@@ -30,7 +30,7 @@ export async function getVersion(moduleName: string) {
   const json = await getJson(moduleName);
   if (!json) {
     throw new Error(
-      `Cannot get version of '${moduleName}' as it could not be found on NPM.`,
+      `Cannot get version for '${moduleName}' as it could not be found on NPM.`,
     );
   }
   const dist = json['dist-tags'];
