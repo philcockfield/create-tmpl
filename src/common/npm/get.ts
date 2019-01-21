@@ -11,8 +11,11 @@ export async function getInfo(
 ): Promise<INpmInfo | undefined> {
   try {
     const json = await getJson(moduleName);
-    const latest = json['dist-tags'].latest;
     const name = json.name;
+
+    console.log('getInfo:name', name);
+
+    const latest = json['dist-tags'].latest;
     return {
       name,
       latest,
@@ -28,6 +31,11 @@ export async function getInfo(
  */
 export async function getVersion(moduleName: string) {
   const json = await getJson(moduleName);
+  if (!json) {
+    throw new Error(
+      `Cannot get version of '${moduleName}' as it could not be found on NPM.`,
+    );
+  }
   const dist = json['dist-tags'];
   return dist ? dist.latest : '';
 }
