@@ -12,9 +12,6 @@ export async function getInfo(
   try {
     const json = await getJson(moduleName);
     const name = json.name;
-
-    console.log('getInfo:name', name);
-
     const latest = json['dist-tags'].latest;
     return {
       name,
