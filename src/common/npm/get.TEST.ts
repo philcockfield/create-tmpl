@@ -1,5 +1,7 @@
 import { expect } from 'chai';
-import { npm, log } from '.';
+
+import { npm } from '.';
+import { log } from '..';
 
 describe('util.npm (integration)', () => {
   it.skip('getInfo', async () => {
@@ -12,7 +14,7 @@ describe('util.npm (integration)', () => {
     log.info(res);
   });
 
-  it.only('getVersions', async () => {
+  it.skip('getVersions', async () => {
     const deps = { react: '^x', 'react-dom': 'x' };
     const res = await npm.getVersions(deps);
     expect(res).to.not.equal(deps);

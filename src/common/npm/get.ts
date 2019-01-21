@@ -1,13 +1,8 @@
-import { log, semver } from './libs';
-import * as exec from './util.exec';
+import { log } from '../libs';
+import * as exec from '../util.exec';
+import { INpmInfo } from './types';
+export * from './types';
 
-export { semver };
-
-export interface INpmInfo {
-  name: string;
-  latest: string;
-  json: any;
-}
 
 /**
  * Lookup latest info for module from NPM.
