@@ -45,7 +45,9 @@ export async function getVersion(moduleName: string) {
 export async function getVersions(deps: { [moduleName: string]: string }) {
   deps = { ...deps };
   const wait = Object.keys(deps).map(async moduleName => {
-    const version = await getVersion(moduleName);
+    const current = deps[moduleName].trim();
+    let version = await getVersion(moduleName);
+    version = current.startsWith('^') ? `^${version}` : version;
     deps[moduleName] = version;
   });
   await Promise.all(wait);

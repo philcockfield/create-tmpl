@@ -12,8 +12,8 @@ describe('util.npm (integration)', () => {
     log.info(res);
   });
 
-  it.skip('getVersions', async () => {
-    const deps = { react: 'x', 'react-dom': 'x' };
+  it.only('getVersions', async () => {
+    const deps = { react: '^x', 'react-dom': 'x' };
     const res = await npm.getVersions(deps);
     expect(res).to.not.equal(deps);
     log.info(res);
