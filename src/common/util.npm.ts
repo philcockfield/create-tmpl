@@ -1,5 +1,7 @@
-import { log } from './libs';
+import { log, semver } from './libs';
 import * as exec from './util.exec';
+
+export { semver };
 
 export interface INpmInfo {
   name: string;
@@ -31,8 +33,23 @@ export async function getInfo(
  * Lookup the latest version of a module on NPM.
  */
 export async function getVersion(moduleName: string) {
-  const json = await getJson(moduleName, '--versions');
-  return json[moduleName];
+  const json = await getJson(moduleName);
+  const dist = json['dist-tags'];
+  return dist ? dist.latest : '';
+}
+
+/**
+ * Looks up the latest version for each key/value pair
+ * eg { dependences } on a package.json file.
+ */
+export async function getVersions(deps: { [moduleName: string]: string }) {
+  deps = { ...deps };
+  const wait = Object.keys(deps).map(async moduleName => {
+    const version = await getVersion(moduleName);
+    deps[moduleName] = version;
+  });
+  await Promise.all(wait);
+  return deps;
 }
 
 /**
