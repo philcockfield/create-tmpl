@@ -195,10 +195,11 @@ await tmpl.execute<IMyVariables>({ variables });
 
 <p>&nbsp;</p>
 
-## TODO
-- [ ] CLI
-- [ ] Timeout on processor/execute
-- [ ] processor (pre-canned)
 
-  - [ ] writeFile
 
+## Sponsor
+Proudly sponsored by [Hypersheet](https://hypersheet.io):
+
+[![Hypersheet](https://user-images.githubusercontent.com/185555/51517404-72f74b80-1e7f-11e9-8f2d-70c5f4600b1f.png)](https://hypersheet.io)
+
+<p>&nbsp;</p>
