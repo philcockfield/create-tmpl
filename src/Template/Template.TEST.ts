@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { expectError } from '@tdb/test';
 
 import { Template } from '.';
 import { fs, fsPath, isBinaryFile } from '../common';
@@ -170,6 +171,14 @@ describe('TemplatePlan', () => {
       const files = await tmpl.files();
       expect(files.length).to.eql(1);
       expect(files[0].path).to.eql('/README.md');
+    });
+
+    it('throws if a full file-path was given to `dir` AND a pattern was specified', async () => {
+      const tmpl = Template.create().add({
+        dir: './example/tmpl-1/README.md',
+        pattern: '*.ts',
+      });
+      expectError(() => tmpl.files());
     });
 
     it('caches results', async () => {

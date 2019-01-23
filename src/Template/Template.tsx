@@ -233,6 +233,14 @@ async function getFiles(source: ITemplateSource) {
   // Check whether a single-file has been specified.
   const stats = await fs.lstat(base);
   if (stats.isFile()) {
+    if (source.pattern) {
+      let error = '';
+      error += `A full file-path was specified as the 'dir' and a glob 'pattern' was given. `;
+      error += `Can only be one of the other. `;
+      error += `\npattern: '${source.pattern}', \ndir: '${source.dir}'`;
+      throw new Error(error);
+    }
+
     const file = fsPath.basename(base);
     base = fsPath.dirname(base);
     const path = fsPath.join(base, file);
