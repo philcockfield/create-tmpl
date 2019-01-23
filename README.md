@@ -104,7 +104,7 @@ then invoke it from `scripts` within your `package.json` like so:
 
 ## 🌳 API
 
-Working with a `Template` moves through three stages:
+When working with a `Template` you'll move through three stages:
 1. Template [composition](#Composition (add source files))
 2. [Filters](#Filtering) and [middleware processors](#Middleware).
 3. Execution
