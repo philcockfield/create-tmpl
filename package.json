@@ -1,6 +1,6 @@
 {
   "name": "create-tmpl",
-  "version": "0.0.17",
+  "version": "0.0.27",
   "description": "Succinct powerful template stamper.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -17,22 +17,19 @@
     "prepare": "yarn run build && yarn run lint && yarn test"
   },
   "dependencies": {
-    "@tdb/util": "1.9.24",
-    "@types/inquirer": "^0.0.43",
-    "execa": "1.0.0",
+    "@tdb/npm": "0.0.2",
+    "@tdb/util": "1.9.26",
+    "@types/inquirer": "0.0.43",
+    "@types/js-yaml": "3.12.0",
     "fast-glob": "2.2.6",
-    "fs-extra": "7.0.1",
-    "inquirer": "^6.2.1",
+    "inquirer": "6.2.1",
     "isbinaryfile": "4.0.0",
     "js-yaml": "3.12.1",
     "yargs": "12.0.5"
   },
   "devDependencies": {
-    "@tdb/test": "1.2.12",
-    "@tdb/typescript": "3.2.7",
-    "@types/execa": "0.9.0",
-    "@types/fs-extra": "5.0.4",
-    "@types/js-yaml": "3.11.4",
+    "@tdb/test": "1.2.13",
+    "@tdb/typescript": "3.2.8",
     "@types/yargs": "12.0.5"
   },
   "files": [

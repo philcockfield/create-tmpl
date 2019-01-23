@@ -1,3 +1,5 @@
+export * from '@tdb/npm/lib/types';
+
 /**
  * The source location of template file(s).
  */
