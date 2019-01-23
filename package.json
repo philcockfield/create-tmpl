@@ -20,6 +20,7 @@
     "@tdb/npm": "0.0.2",
     "@tdb/util": "1.9.26",
     "@types/inquirer": "0.0.43",
+    "@types/js-yaml": "3.12.0",
     "fast-glob": "2.2.6",
     "inquirer": "6.2.1",
     "isbinaryfile": "4.0.0",
@@ -29,7 +30,6 @@
   "devDependencies": {
     "@tdb/test": "1.2.13",
     "@tdb/typescript": "3.2.8",
-    "@types/js-yaml": "3.12.0",
     "@types/yargs": "12.0.5"
   },
   "files": [
