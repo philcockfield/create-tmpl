@@ -17,7 +17,7 @@
     "prepare": "yarn run build && yarn run lint && yarn test"
   },
   "dependencies": {
-    "@tdb/npm": "0.0.5",
+    "@tdb/npm": "0.0.6",
     "@tdb/util": "1.9.26",
     "@types/inquirer": "0.0.43",
     "@types/js-yaml": "3.12.0",
