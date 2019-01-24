@@ -6,6 +6,7 @@ export * from '@tdb/npm/lib/types';
 export type ITemplateSource = {
   dir: string;
   pattern?: string; // Glob pattern.
+  targetPath?: string; // The path to prefix the template with when added (allow composition).
 };
 
 /**
@@ -13,7 +14,8 @@ export type ITemplateSource = {
  */
 export type ITemplateFile = {
   base: string;
-  path: string;
+  source: string;
+  target: string;
   isBinary: boolean;
 };
 
@@ -40,7 +42,10 @@ export type TemplatePathFilter = RegExp;
  * Middleware: [Request]
  */
 export type ITemplateRequest<V extends IVariables = {}> = {
-  path: string;
+  path: {
+    source: string;
+    target: string;
+  };
   buffer: Buffer;
   text?: string;
   isBinary: boolean;
