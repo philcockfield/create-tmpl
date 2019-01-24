@@ -163,7 +163,7 @@ export class Template {
     // NB: The duplicate files from templates added AFTER earlier templates
     //     override the earlier template files.
     const exists = (file: ITemplateFile, list: ITemplateFile[]) =>
-      list.findIndex(f => f.path === file.path) > -1;
+      list.findIndex(f => f.source === file.source) > -1;
     files = files
       .reverse()
       .reduce(
@@ -214,17 +214,26 @@ export class Template {
  * INTERNAL
  */
 async function getFiles(source: ITemplateSource) {
-  const { dir, pattern = '**' } = source;
+  const { dir, pattern = '**', targetPath } = source;
   let base = fsPath.resolve(dir);
 
   if (!(await fs.pathExists(base))) {
     return [];
   }
 
+  const formatPath = (path: string) => path.substr(base.length);
+
+  const toTarget = (path: string) => {
+    path = formatPath(path);
+    path = targetPath ? fsPath.join(targetPath, path) : path;
+    return path;
+  };
+
   const toFile = async (path: string) => {
     const file: ITemplateFile = {
       base,
-      path: path.substr(base.length),
+      source: formatPath(path),
+      target: toTarget(path),
       isBinary: await isBinaryFile(path),
     };
     return file;
@@ -276,7 +285,7 @@ function runProcessors(args: {
         }
       };
 
-      const buffer = await fs.readFile(fsPath.join(file.base, file.path));
+      const buffer = await fs.readFile(fsPath.join(file.base, file.source));
       let text = file.isBinary ? undefined : buffer.toString();
 
       const res: ITemplateResponse = {
@@ -301,13 +310,14 @@ function runProcessors(args: {
         if (isResolved || !fn) {
           return;
         }
-        const path = file.path;
+        const { source, target } = file;
+        const path = { source, target };
         const content = text || buffer;
 
         // If filters exist, ensure the path is a match.
         const filters = fn.pathFilters || [];
         if (filters.length > 0) {
-          const isMatch = filters.some(filter => filter.test(path));
+          const isMatch = filters.some(filter => filter.test(path.target));
           if (!isMatch) {
             return runNext();
           }

@@ -91,7 +91,11 @@ describe('TemplatePlan', () => {
       const tmpl2 = Template.create(['./tmpl-2', './tmpl-4']);
       const tmpl3 = Template.create().add('./tmpl-3');
       const tmpl4 = Template.create().add('./tmpl-4');
-      const res = tmpl1.add([tmpl2, tmpl3, tmpl3, tmpl1, tmpl4]);
+      const tmpl5 = Template.create().add({
+        dir: './tmpl-4',
+        targetPath: '/foo',
+      });
+      const res = tmpl1.add([tmpl2, tmpl3, tmpl3, tmpl1, tmpl4, tmpl5, tmpl5]);
 
       // NB: Added multiple times and de-duped.
       expect(res.sources).to.eql([
@@ -99,6 +103,7 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-2' },
         { dir: './tmpl-4' },
         { dir: './tmpl-3' },
+        { dir: './tmpl-4', targetPath: '/foo' },
       ]);
     });
   });
@@ -142,18 +147,21 @@ describe('TemplatePlan', () => {
 
       expect(files.length).to.eql(1);
       expect(file.base).to.eql(fsPath.resolve(source.dir));
-      expect(file.path).to.eql('/README.md');
+      expect(file.source).to.eql('/README.md');
     });
 
     it('has multiple files ("**" glob pattern by default)', async () => {
       const tmpl = Template.create({ dir: './example/tmpl-1' });
+      const includes = (paths: string[]) => {
+        expect(paths).to.include('/.babelrc');
+        expect(paths).to.include('/.gitignore');
+        expect(paths).to.include('/README.md');
+        expect(paths).to.include('/images/face.svg');
+        expect(paths).to.include('/src/index.ts');
+      };
       const files = await tmpl.files();
-      const paths = files.map(f => f.path);
-      expect(paths).to.include('/.babelrc');
-      expect(paths).to.include('/.gitignore');
-      expect(paths).to.include('/README.md');
-      expect(paths).to.include('/images/face.svg');
-      expect(paths).to.include('/src/index.ts');
+      includes(files.map(f => f.source));
+      includes(files.map(f => f.target));
     });
 
     it('filter pattern (.ts file only)', async () => {
@@ -162,7 +170,7 @@ describe('TemplatePlan', () => {
         pattern: '**/*.ts',
       });
       const files = await tmpl.files();
-      const paths = files.map(f => f.path);
+      const paths = files.map(f => f.source);
       expect(paths).to.eql(['/index.ts', '/src/index.ts']);
     });
 
@@ -170,7 +178,7 @@ describe('TemplatePlan', () => {
       const tmpl = Template.create({ dir: './example/tmpl-1/README.md' });
       const files = await tmpl.files();
       expect(files.length).to.eql(1);
-      expect(files[0].path).to.eql('/README.md');
+      expect(files[0].source).to.eql('/README.md');
     });
 
     it('throws if a full file-path was given to `dir` AND a pattern was specified', async () => {
@@ -201,12 +209,31 @@ describe('TemplatePlan', () => {
         .add({ dir: './example/sub-folder/tmpl-3' });
 
       const files = await tmpl.files();
-      const readmes = files.filter(f => f.path.endsWith('/README.md'));
+      const readmes = files.filter(f => f.source.endsWith('/README.md'));
 
       // NB: One README, taken from `tmpl-3` which overrides `tmpl-2`
       //     because `tmpl-3` was added after `tmpl-2`.
       expect(readmes.length).to.eql(1);
       expect(readmes[0].base.endsWith('/tmpl-3')).to.eql(true);
+    });
+
+    it('prepends with target path', async () => {
+      const tmpl = Template.create().add({
+        dir: './example/tmpl-2',
+        targetPath: '///foo//bar////', // NB: cleans up multiple "/"
+      });
+
+      const files = await tmpl.files();
+      const sources = files.map(f => f.source);
+      const targets = files.map(f => f.target);
+
+      expect(sources).to.include('/README.md');
+      expect(sources).to.include('/blueprint.png');
+      expect(sources).to.include('/index.js');
+
+      expect(targets).to.include('/foo/bar/README.md');
+      expect(targets).to.include('/foo/bar/blueprint.png');
+      expect(targets).to.include('/foo/bar/index.js');
     });
   });
 
@@ -219,7 +246,7 @@ describe('TemplatePlan', () => {
 
     it('applies filter', async () => {
       const tmpl1 = Template.create({ dir: './example/tmpl-2' });
-      const tmpl2 = tmpl1.filter(f => f.path.endsWith('.js'));
+      const tmpl2 = tmpl1.filter(f => f.source.endsWith('.js'));
       const files1 = await tmpl1.files();
       const files2 = await tmpl2.files();
       expect(files1.length).to.eql(3);
@@ -235,7 +262,6 @@ describe('TemplatePlan', () => {
     });
 
     it('process: change => write', async () => {
-      // let text
       type IMyVariables = { greeting: string };
       const dir = fsPath.resolve(TEST_DIR);
       const tmpl = Template.create()
@@ -251,7 +277,7 @@ describe('TemplatePlan', () => {
           res.next();
         })
         .use(async (req, res) => {
-          const path = fsPath.join(dir, req.path);
+          const path = fsPath.join(dir, req.path.target);
           await fs.ensureDir(dir);
           await fs.writeFile(path, req.buffer);
           res.complete();
@@ -276,7 +302,7 @@ describe('TemplatePlan', () => {
       const tmpl = Template.create()
         .add('./example/tmpl-1')
         .use(/\.ts$/, (req, res) => {
-          paths = [...paths, req.path];
+          paths = [...paths, req.path.target];
           res.next();
         });
       await tmpl.execute();

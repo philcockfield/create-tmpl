@@ -5,11 +5,11 @@ import { ITemplateRequest, IVariables } from '../types';
  */
 export class TemplateRequest implements ITemplateRequest {
   private readonly content: Buffer | string;
-  public readonly path: string;
+  public readonly path: ITemplateRequest['path'];
   public readonly variables: IVariables;
 
   constructor(args: {
-    path: string;
+    path: ITemplateRequest['path'];
     content: Buffer | string;
     variables: IVariables;
   }) {
