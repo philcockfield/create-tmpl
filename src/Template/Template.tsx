@@ -214,7 +214,7 @@ export class Template {
  * INTERNAL
  */
 async function getFiles(source: ITemplateSource) {
-  const { dir, pattern = '**', targetPath } = source;
+  const { dir, pattern = '**', targetDir: targetPath } = source;
   let base = fsPath.resolve(dir);
 
   if (!(await fs.pathExists(base))) {

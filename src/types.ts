@@ -6,7 +6,7 @@ export * from '@tdb/npm/lib/types';
 export type ITemplateSource = {
   dir: string;
   pattern?: string; // Glob pattern.
-  targetPath?: string; // The path to prefix the template with when added (allow composition).
+  targetDir?: string; // The path to prefix the template with when added (allow composition).
 };
 
 /**

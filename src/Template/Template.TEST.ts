@@ -7,7 +7,7 @@ import { fs, fsPath, isBinaryFile } from '../common';
 const TEST_DIR = './tmp/test';
 const cleanUp = async () => fs.remove(TEST_DIR);
 
-describe('TemplatePlan', () => {
+describe('Template', () => {
   beforeEach(cleanUp);
   afterEach(cleanUp);
 
@@ -93,7 +93,7 @@ describe('TemplatePlan', () => {
       const tmpl4 = Template.create().add('./tmpl-4');
       const tmpl5 = Template.create().add({
         dir: './tmpl-4',
-        targetPath: '/foo',
+        targetDir: '/foo',
       });
       const res = tmpl1.add([tmpl2, tmpl3, tmpl3, tmpl1, tmpl4, tmpl5, tmpl5]);
 
@@ -103,7 +103,7 @@ describe('TemplatePlan', () => {
         { dir: './tmpl-2' },
         { dir: './tmpl-4' },
         { dir: './tmpl-3' },
-        { dir: './tmpl-4', targetPath: '/foo' },
+        { dir: './tmpl-4', targetDir: '/foo' },
       ]);
     });
   });
@@ -220,7 +220,7 @@ describe('TemplatePlan', () => {
     it('prepends with target path', async () => {
       const tmpl = Template.create().add({
         dir: './example/tmpl-2',
-        targetPath: '///foo//bar////', // NB: cleans up multiple "/"
+        targetDir: '///foo//bar////', // NB: cleans up multiple "/"
       });
 
       const files = await tmpl.files();
