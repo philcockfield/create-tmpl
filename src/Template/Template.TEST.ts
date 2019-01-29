@@ -217,7 +217,7 @@ describe('Template', () => {
       expect(readmes[0].base.endsWith('/tmpl-3')).to.eql(true);
     });
 
-    it('prepends with target path', async () => {
+    it('prepends with [targetDir] path', async () => {
       const tmpl = Template.create().add({
         dir: './example/tmpl-2',
         targetDir: '///foo//bar////', // NB: cleans up multiple "/"
@@ -234,6 +234,21 @@ describe('Template', () => {
       expect(targets).to.include('/foo/bar/README.md');
       expect(targets).to.include('/foo/bar/blueprint.png');
       expect(targets).to.include('/foo/bar/index.js');
+    });
+
+    it('prepends with [targetDir] path (single file)', async () => {
+      const tmpl = Template.create().add({
+        dir: './example/tmpl-2',
+        pattern: 'README.md',
+        targetDir: '///foo//bar////', // NB: cleans up multiple "/"
+      });
+
+      const files = await tmpl.files();
+      const sources = files.map(f => f.source);
+      const targets = files.map(f => f.target);
+
+      expect(sources).to.include('/README.md');
+      expect(targets).to.include('/foo/bar/README.md');
     });
   });
 
