@@ -118,9 +118,9 @@ Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` meth
 A template is composed of one or more file locations consisting of a directory and an optional [glob](https://en.wikipedia.org/wiki/Glob_(programming)) pattern (default is `**`, everything).  
 
 ```typescript
-import { template } from 'create-tmpl'
+import { Template } from 'create-tmpl'
 
-const tmpl = template
+const tmpl = Template
   .create()
   .add({ dir: './templates/one' })
   .add({ dir: './templates/two', pattern: '**/*.md' });
@@ -178,6 +178,20 @@ const tmpl = template
 ```
 
 Middleware is executed in the order that it is added to the pipeline.  Call `res.next()` to move to the next middleware in the pipeline, or call `res.complete()` when done, and the execution pipeline finished.
+
+```typescript
+const tmpl = Template
+  .create('./my-tmpl')
+  .use(/\.ts$/, (req, res) => {
+    // Operate on typescript file only.
+    // ...
+    res.next();
+  });
+```
+
+When adding middleware you can optionally apply `pathFilter` [regular-expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to narrow which file paths the middleware applies to.  The example above operates on `.ts` files only.  Passing an array of regular-expressions acts as an `OR` set.
+
+
 
 <p>&nbsp;</p>
 
