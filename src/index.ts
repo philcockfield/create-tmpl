@@ -5,7 +5,7 @@ export {
   NpmPackage,
   yaml,
   file,
-  listr,
+  Listr,
   inquirer,
 } from './common';
 export * from './types';
