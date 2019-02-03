@@ -35,7 +35,8 @@
     "@types/yargs": "12.0.7"
   },
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "keywords": [
     "template",
