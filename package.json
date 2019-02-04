@@ -17,8 +17,8 @@
     "prepare": "yarn run build && yarn run lint && yarn test"
   },
   "dependencies": {
-    "@tdb/npm": "0.1.5",
-    "@tdb/util": "1.9.31",
+    "@tdb/npm": "0.1.7",
+    "@tdb/util": "1.9.32",
     "@types/inquirer": "0.0.43",
     "@types/js-yaml": "3.12.0",
     "@types/listr": "0.13.0",
@@ -30,7 +30,7 @@
     "yargs": "12.0.5"
   },
   "devDependencies": {
-    "@tdb/test": "1.2.15",
+    "@tdb/test": "1.2.16",
     "@tdb/typescript": "3.2.10",
     "@types/yargs": "12.0.7"
   },
