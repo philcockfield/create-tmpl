@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
-import { log } from './common';
+import { log } from '../common';
 log.info();
 
 /**

@@ -5,7 +5,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "bin": {
-    "tmpl": "./lib/bin.js"
+    "tmpl": "./lib/bin/index.js"
   },
   "scripts": {
     "tmp": "node lib/bin $@",

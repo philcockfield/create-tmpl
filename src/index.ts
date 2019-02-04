@@ -9,4 +9,7 @@ export {
   inquirer,
 } from './common';
 export * from './types';
-export * from './tmpl';
+import * as tmpl from './tmpl';
+
+export { tmpl };
+export { Template } from './Template';
