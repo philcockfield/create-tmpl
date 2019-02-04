@@ -366,7 +366,6 @@ describe('Template', () => {
         });
 
       tmpl.events$.subscribe(e => (events = [...events, e]));
-
       await tmpl.execute();
 
       expect(events.length).to.be.greaterThan(0);
