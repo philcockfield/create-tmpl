@@ -93,7 +93,7 @@ export type ITemplateRequest<V extends IVariables = {}> = {
 /**
  * Middleware: [Response]
  */
-export type MiddlewareDoneType = 'NEXT' | 'COMPLETE';
+export type AfterTemplateMiddleware = 'NEXT' | 'COMPLETE';
 
 export type ITemplateResponse = {
   text: string | undefined;
@@ -101,7 +101,7 @@ export type ITemplateResponse = {
   alert: <T extends ITemplateAlertPayload>(e: T) => ITemplateResponse;
   next: () => void;
   complete: () => void;
-  done: (type: MiddlewareDoneType) => void;
+  done: (next?: AfterTemplateMiddleware) => void;
 };
 
 // NB: Taken from the [lib.dom.d.ts] types.

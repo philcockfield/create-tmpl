@@ -334,7 +334,7 @@ function runProcessors(args: {
       const res: ITemplateResponse = {
         next: () => runNext(),
         complete: () => runComplete(),
-        done: type => (type === 'COMPLETE' ? runComplete() : runNext()),
+        done: next => (next === 'COMPLETE' ? runComplete() : runNext()),
 
         get text() {
           return text;
