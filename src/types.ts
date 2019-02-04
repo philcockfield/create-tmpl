@@ -1,4 +1,5 @@
 export * from '@tdb/npm/lib/types';
+export * from './common/prompt/types';
 
 /**
  * The source location of template file(s).

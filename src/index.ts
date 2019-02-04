@@ -6,7 +6,7 @@ export {
   yaml,
   file,
   Listr,
-  inquirer,
+  prompt,
 } from './common';
 export * from './types';
 import * as tmpl from './tmpl';
