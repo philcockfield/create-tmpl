@@ -58,6 +58,7 @@ export type ITemplateRequest<V extends IVariables = {}> = {
 export type ITemplateResponse = {
   text: string | undefined;
   replaceText: ReplaceTemplateText;
+  alert: <T extends ITemplateAlert>(e: T) => ITemplateResponse;
   next: () => void;
   complete: () => void;
 };
@@ -75,6 +76,12 @@ export type ReplaceTemplateText = (
  */
 export type ITemplateEvent = ITemplateAlertEvent;
 
+/**
+ * An alert notification fired from middleware.
+ * Example usage:
+ *    Communicating progress or state change to a
+ *    running [Listr] task.
+ */
 export type ITemplateAlert = { message: string };
 export type ITemplateAlertEvent = {
   type: 'ALERT';

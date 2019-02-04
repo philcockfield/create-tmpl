@@ -20,6 +20,7 @@ import {
   TemplateMiddleware,
   TemplatePathFilter,
   ITemplateEvent,
+  ITemplateAlert,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
@@ -234,9 +235,10 @@ export class Template {
     }
 
     // Run the processor pipe-line.
+    const events$ = this._events$;
     const files = await this.files({ cache });
     const wait = files.map(file =>
-      runProcessors({ processors, file, variables }),
+      runProcessors({ processors, file, variables, events$ }),
     );
 
     // Finish up.
@@ -306,6 +308,7 @@ function runProcessors(args: {
   variables: IVariables;
   processors: Handler[];
   file: ITemplateFile;
+  events$: Subject<ITemplateEvent>;
 }) {
   return new Promise(async (resolve, reject) => {
     const { processors, file, variables } = args;
@@ -336,6 +339,11 @@ function runProcessors(args: {
               ? undefined
               : text.replace(searchValue, replaceValue);
           return res;
+        },
+
+        alert<T extends ITemplateAlert>(payload: T) {
+          args.events$.next({ type: 'ALERT', payload });
+          return this;
         },
       };
 

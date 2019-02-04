@@ -1,7 +1,7 @@
 import { ITemplateRequest, IVariables } from '../types';
 
 /**
- * A request that is passed to a processor.
+ * A request that is passed to a middleware processor.
  */
 export class TemplateRequest implements ITemplateRequest {
   private readonly content: Buffer | string;

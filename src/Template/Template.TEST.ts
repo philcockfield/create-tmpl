@@ -14,6 +14,7 @@ import { expectError } from '@tdb/test';
 
 import { Template } from '.';
 import { fs, fsPath, isBinaryFile } from '../common';
+import { ITemplateEvent, ITemplateAlert } from '../types';
 
 const TEST_DIR = './tmp/test';
 const cleanUp = async () => fs.remove(TEST_DIR);
@@ -352,6 +353,29 @@ describe('Template', () => {
     it('exposes an events observable', () => {
       const tmpl = Template.create();
       expect(tmpl.events$).to.be.an.instanceof(Observable);
+    });
+
+    it('fires alert event from middleware', async () => {
+      type MyAlert = ITemplateAlert & { path: string };
+      let events: ITemplateEvent[] = [];
+      const tmpl = Template.create()
+        .add('./example/tmpl-1')
+        .use((req, res) => {
+          res.alert<MyAlert>({ message: 'Foo', path: req.path.source });
+          res.next();
+        });
+
+      tmpl.events$.subscribe(e => (events = [...events, e]));
+
+      await tmpl.execute();
+
+      expect(events.length).to.be.greaterThan(0);
+      const e = events
+        .map(e => e.payload as MyAlert)
+        .find(e => e.path.endsWith('.babelrc'));
+
+      expect(e && e.message).to.eql('Foo');
+      expect(e && e.path).to.eql('/.babelrc');
     });
   });
 });
