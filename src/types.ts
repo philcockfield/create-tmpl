@@ -30,42 +30,44 @@ export type IVariables = { [key: string]: any };
 export type TemplateFilter = (file: ITemplateFile) => boolean;
 
 /**
- * EVENTS
+ * [EVENTS]
  */
 export type ITemplateEvent =
-  | ITemplateEventAlert
-  | ITemplateEventExecuteStart
-  | ITemplateEventExecuteComplete;
+  | IExecuteTemplateStart
+  | IExecuteTemplateComplete
+  | ITemplateAlert;
 
 /**
- * [Executing]
+ * Event: [Executing]
  */
-export type ITemplateExecute = {
+export type IExecutePayload = {
   files: ITemplateFile[];
 };
-export type ITemplateEventExecuteStart = {
+export type IExecuteTemplateStart = {
   type: 'EXECUTE/start';
-  payload: ITemplateExecute;
+  payload: IExecutePayload;
 };
-export type ITemplateEventExecuteComplete = {
+export type IExecuteTemplateComplete = {
   type: 'EXECUTE/complete';
-  payload: ITemplateExecute;
+  payload: IExecutePayload;
 };
 
 /**
+ * Event: [Alerting]
+ *
  * An alert notification fired from middleware.
  * Example usage:
  *    Communicating progress or state change to a
  *    running [Listr] task.
  */
-export type ITemplateAlert = { message: string };
-export type ITemplateEventAlert = {
+export type ITemplateAlertPayload = { message: string };
+export type ITemplateAlert = {
   type: 'ALERT';
-  payload: ITemplateAlert;
+  payload: ITemplateAlertPayload;
 };
 
 /**
- * [MIDDLEWARE].
+ * [MIDDLEWARE]
  */
 export type TemplateMiddleware<V extends IVariables = {}> = (
   req: ITemplateRequest<V>,
@@ -93,7 +95,7 @@ export type ITemplateRequest<V extends IVariables = {}> = {
 export type ITemplateResponse = {
   text: string | undefined;
   replaceText: ReplaceTemplateText;
-  alert: <T extends ITemplateAlert>(e: T) => ITemplateResponse;
+  alert: <T extends ITemplateAlertPayload>(e: T) => ITemplateResponse;
   next: () => void;
   complete: () => void;
 };

@@ -20,7 +20,8 @@ import {
   TemplateMiddleware,
   TemplatePathFilter,
   ITemplateEvent,
-  ITemplateAlert,
+  ITemplateAlertPayload,
+  IExecutePayload,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
@@ -234,15 +235,20 @@ export class Template {
       return;
     }
 
-    // Run the processor pipe-line.
-    const events$ = this._events$;
+    // Prepare.
     const files = await this.files({ cache });
+    const events$ = this._events$;
+    const payload: IExecutePayload = { files };
+    events$.next({ type: 'EXECUTE/start', payload });
+
+    // Run the processor pipe-line.
     const wait = files.map(file =>
       runProcessors({ processors, file, variables, events$ }),
     );
 
     // Finish up.
     await Promise.all(wait);
+    events$.next({ type: 'EXECUTE/complete', payload });
   }
 }
 
@@ -341,7 +347,7 @@ function runProcessors(args: {
           return res;
         },
 
-        alert<T extends ITemplateAlert>(payload: T) {
+        alert<T extends ITemplateAlertPayload>(payload: T) {
           args.events$.next({ type: 'ALERT', payload });
           return this;
         },
