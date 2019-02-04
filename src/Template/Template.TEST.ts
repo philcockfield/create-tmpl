@@ -336,6 +336,18 @@ describe('Template', () => {
     });
   });
 
+  describe('dispose', () => {
+    it('disposes of a template', () => {
+      const tmpl = Template.create();
+      let count = 0;
+      tmpl.disposed$.subscribe(() => count++);
+      expect(tmpl.isDisposed).to.eql(false);
+      tmpl.dispose();
+      expect(count).to.eql(1);
+      expect(tmpl.isDisposed).to.eql(true);
+    });
+  });
+
   describe('events$ (observable)', () => {
     it('exposes an events observable', () => {
       const tmpl = Template.create();
