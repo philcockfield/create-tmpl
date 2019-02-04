@@ -17,13 +17,13 @@
     "prepare": "yarn run build && yarn run lint && yarn test"
   },
   "dependencies": {
-    "@tdb/npm": "0.1.7",
+    "@tdb/npm": "0.1.10",
     "@tdb/util": "1.9.32",
     "@types/inquirer": "0.0.43",
     "@types/js-yaml": "3.12.0",
     "@types/listr": "0.13.0",
     "fast-glob": "2.2.6",
-    "inquirer": "6.2.1",
+    "inquirer": "6.2.2",
     "isbinaryfile": "4.0.0",
     "js-yaml": "3.12.1",
     "listr": "0.14.3",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@tdb/test": "1.2.16",
     "@tdb/typescript": "3.2.10",
-    "@types/yargs": "12.0.7"
+    "@types/yargs": "12.0.8"
   },
   "files": [
     "lib",

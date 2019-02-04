@@ -351,7 +351,7 @@ describe('Template', () => {
         .add('./example/tmpl-1')
         .use((req, res) => {
           res.alert<MyAlert>({ message: 'Foo', path: req.path.source });
-          res.next();
+          res.done('NEXT');
         });
 
       tmpl.events$.subscribe(e => (events = [...events, e]));

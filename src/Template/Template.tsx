@@ -321,7 +321,7 @@ function runProcessors(args: {
     let isResolved = false;
 
     try {
-      const done = () => {
+      const runComplete = () => {
         if (!isResolved) {
           isResolved = true;
           resolve();
@@ -333,7 +333,8 @@ function runProcessors(args: {
 
       const res: ITemplateResponse = {
         next: () => runNext(),
-        complete: () => done(),
+        complete: () => runComplete(),
+        done: type => (type === 'COMPLETE' ? runComplete() : runNext()),
 
         get text() {
           return text;
@@ -382,7 +383,7 @@ function runProcessors(args: {
         if (index < processors.length) {
           runProcessor(index);
         } else {
-          done();
+          runComplete();
         }
       };
 
