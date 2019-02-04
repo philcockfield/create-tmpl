@@ -1,3 +1,15 @@
+import { Observable, Subject, BehaviorSubject, asapScheduler } from 'rxjs';
+import {
+  takeUntil,
+  take,
+  takeWhile,
+  map,
+  filter,
+  share,
+  delay,
+  distinctUntilChanged,
+} from 'rxjs/operators';
+
 import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
 import {
   ITemplateResponse,
@@ -7,6 +19,7 @@ import {
   IVariables,
   TemplateMiddleware,
   TemplatePathFilter,
+  ITemplateEvent,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
@@ -41,6 +54,19 @@ export class Template {
   }
 
   /**
+   * Fields.
+   */
+  private readonly _disposed$ = new Subject();
+  private readonly _events$ = new Subject<ITemplateEvent>();
+
+  public isDisposed = false;
+  public readonly disposed$ = this._disposed$.pipe(share());
+  public readonly events$ = this._events$.pipe(
+    takeUntil(this.disposed$),
+    share(),
+  );
+
+  /**
    * Constructor.
    */
   private constructor(args: ITemplateArgs) {
@@ -48,6 +74,14 @@ export class Template {
     this.config.sources = sources || this.config.sources;
     this.config.filters = filters || this.config.filters;
     this.config.processors = processors || this.config.processors;
+  }
+
+  /**
+   * Disposes of the template.
+   */
+  public dispose() {
+    this.isDisposed = true;
+    this._disposed$.next();
   }
 
   /**

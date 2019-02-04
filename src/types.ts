@@ -69,3 +69,14 @@ export type ReplaceTemplateText = (
   },
   replaceValue: string,
 ) => ITemplateResponse;
+
+/**
+ * EVENTS
+ */
+export type ITemplateEvent = ITemplateAlertEvent;
+
+export type ITemplateAlert = { message: string };
+export type ITemplateAlertEvent = {
+  type: 'ALERT';
+  payload: ITemplateAlert;
+};

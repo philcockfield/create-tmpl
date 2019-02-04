@@ -1,3 +1,14 @@
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import {
+  takeUntil,
+  take,
+  takeWhile,
+  map,
+  filter,
+  share,
+  delay,
+  distinctUntilChanged,
+} from 'rxjs/operators';
 import { expect } from 'chai';
 import { expectError } from '@tdb/test';
 
@@ -269,7 +280,7 @@ describe('Template', () => {
     });
   });
 
-  describe('processors', () => {
+  describe('middleware ("use")', () => {
     it('adds as a new instance', () => {
       const tmpl1 = Template.create({ dir: './tmpl-1' });
       const tmpl2 = tmpl1.use((req, res) => true);
@@ -322,6 +333,13 @@ describe('Template', () => {
         });
       await tmpl.execute();
       expect(paths).to.eql(['/index.ts', '/src/index.ts']);
+    });
+  });
+
+  describe('events$ (observable)', () => {
+    it('exposes an events observable', () => {
+      const tmpl = Template.create();
+      expect(tmpl.events$).to.be.an.instanceof(Observable);
     });
   });
 });
