@@ -33,10 +33,10 @@
     ramda "0.26.1"
     rxjs "6.3.3"
 
-"@tdb/npm@0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@tdb/npm/-/npm-0.1.11.tgz#522f96e40c96df8028a2a466556c300c22d1f3a1"
-  integrity sha512-gt4sST51KAI0xRV9HAOF6vuxtK/YzwMgS0BxThhbvLg0YjXAKreWIInZjSP79uoKGFrXWNzoKEvvz/cIwZbyDQ==
+"@tdb/npm@0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@tdb/npm/-/npm-0.1.14.tgz#c647046c701b21553e09de5e4e56d4d24e3731f4"
+  integrity sha512-dq9vcUkgyybZ9HVdbUsJZuUbQ0H2D3ydQtCaUP9yqAJ9AXHdWhnCpYmRzurOj8XnIMBZdFmJgFOttcYjWGBEUg==
   dependencies:
     "@tdb/util" "1.9.32"
     "@types/fs-extra" "5.0.4"

@@ -1,27 +1,18 @@
-import { Observable, Subject, BehaviorSubject, asapScheduler } from 'rxjs';
-import {
-  takeUntil,
-  take,
-  takeWhile,
-  map,
-  filter,
-  share,
-  delay,
-  distinctUntilChanged,
-} from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, share, takeUntil } from 'rxjs/operators';
 
-import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
+import { fs, fsPath, glob, isBinaryFile, R, value } from '../common';
 import {
-  ITemplateResponse,
+  IExecutePayload,
+  ITemplateAlertPayload,
+  ITemplateEvent,
   ITemplateFile,
+  ITemplateResponse,
   ITemplateSource,
-  TemplateFilter,
   IVariables,
+  TemplateFilter,
   TemplateMiddleware,
   TemplatePathFilter,
-  ITemplateEvent,
-  ITemplateAlertPayload,
-  IExecutePayload,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
