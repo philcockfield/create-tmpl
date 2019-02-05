@@ -339,6 +339,9 @@ function runProcessors(args: {
         get text() {
           return text;
         },
+        set text(value: string | undefined) {
+          text = value;
+        },
 
         replaceText(searchValue, replaceValue) {
           text =
