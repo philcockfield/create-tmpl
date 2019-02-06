@@ -10,11 +10,11 @@
   "scripts": {
     "tmp": "node lib/bin $@",
     "start": "node .",
-    "test": "sh ./node_modules/@tdb/test/sh/test.sh",
-    "tdd": "yarn run test --reporter min --watch",
-    "lint": "sh ./node_modules/@tdb/typescript/sh/lint.sh $@",
-    "build": "sh ./node_modules/@tdb/typescript/sh/build.sh $@",
-    "prepare": "yarn run build && yarn run lint && yarn test"
+    "test": "ts test",
+    "tdd": "ts test --watch",
+    "lint": "ts lint",
+    "build": "ts build",
+    "prepare": "ts prepare"
   },
   "dependencies": {
     "@tdb/npm": "0.1.21",
@@ -30,8 +30,8 @@
     "yargs": "12.0.5"
   },
   "devDependencies": {
-    "@tdb/test": "1.2.20",
-    "@tdb/typescript": "3.3.1",
+    "@platform/test": "^0.0.6",
+    "@platform/ts": "^3.3.25",
     "@types/yargs": "12.0.8"
   },
   "files": [

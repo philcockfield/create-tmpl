@@ -1,4 +1,4 @@
-import { expectError } from '@tdb/test';
+import { expectError } from '@platform/test';
 import { expect } from 'chai';
 import { Observable } from 'rxjs';
 
