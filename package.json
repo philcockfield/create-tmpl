@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@platform/test": "0.0.23",
-    "@platform/ts.cli": "3.3.13",
+    "@platform/ts.cli": "3.3.15",
     "@types/yargs": "12.0.8"
   },
   "files": [
