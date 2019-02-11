@@ -1,26 +1,18 @@
-import { Observable, Subject, BehaviorSubject, asapScheduler } from 'rxjs';
-import {
-  takeUntil,
-  take,
-  takeWhile,
-  map,
-  filter,
-  share,
-  delay,
-  distinctUntilChanged,
-} from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, share, takeUntil } from 'rxjs/operators';
 
-import { R, fs, fsPath, glob, isBinaryFile, value } from '../common';
+import { fs, fsPath, glob, isBinaryFile, R, value } from '../common';
 import {
-  ITemplateResponse,
+  IExecutePayload,
+  ITemplateAlertPayload,
+  ITemplateEvent,
   ITemplateFile,
+  ITemplateResponse,
   ITemplateSource,
-  TemplateFilter,
   IVariables,
+  TemplateFilter,
   TemplateMiddleware,
   TemplatePathFilter,
-  ITemplateEvent,
-  ITemplateAlert,
 } from '../types';
 import { TemplateRequest } from './TemplateRequest';
 
@@ -234,15 +226,20 @@ export class Template {
       return;
     }
 
-    // Run the processor pipe-line.
-    const events$ = this._events$;
+    // Prepare.
     const files = await this.files({ cache });
+    const events$ = this._events$;
+    const payload: IExecutePayload = { files };
+    events$.next({ type: 'EXECUTE/start', payload });
+
+    // Run the processor pipe-line.
     const wait = files.map(file =>
       runProcessors({ processors, file, variables, events$ }),
     );
 
     // Finish up.
     await Promise.all(wait);
+    events$.next({ type: 'EXECUTE/complete', payload });
   }
 }
 
@@ -315,7 +312,7 @@ function runProcessors(args: {
     let isResolved = false;
 
     try {
-      const done = () => {
+      const runComplete = () => {
         if (!isResolved) {
           isResolved = true;
           resolve();
@@ -327,10 +324,14 @@ function runProcessors(args: {
 
       const res: ITemplateResponse = {
         next: () => runNext(),
-        complete: () => done(),
+        complete: () => runComplete(),
+        done: next => (next === 'COMPLETE' ? runComplete() : runNext()),
 
         get text() {
           return text;
+        },
+        set text(value: string | undefined) {
+          text = value;
         },
 
         replaceText(searchValue, replaceValue) {
@@ -341,7 +342,7 @@ function runProcessors(args: {
           return res;
         },
 
-        alert<T extends ITemplateAlert>(payload: T) {
+        alert<T extends ITemplateAlertPayload>(payload: T) {
           args.events$.next({ type: 'ALERT', payload });
           return this;
         },
@@ -376,7 +377,7 @@ function runProcessors(args: {
         if (index < processors.length) {
           runProcessor(index);
         } else {
-          done();
+          runComplete();
         }
       };
 

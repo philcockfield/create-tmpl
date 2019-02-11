@@ -1,20 +1,9 @@
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import {
-  takeUntil,
-  take,
-  takeWhile,
-  map,
-  filter,
-  share,
-  delay,
-  distinctUntilChanged,
-} from 'rxjs/operators';
+import { expectError } from '@platform/test';
 import { expect } from 'chai';
-import { expectError } from '@tdb/test';
+import { Observable } from 'rxjs';
 
 import { Template } from '.';
-import { fs, fsPath, isBinaryFile } from '../common';
-import { ITemplateEvent, ITemplateAlert } from '../types';
+import { fs, fsPath, isBinaryFile, types } from '../common';
 
 const TEST_DIR = './tmp/test';
 const cleanUp = async () => fs.remove(TEST_DIR);
@@ -356,26 +345,50 @@ describe('Template', () => {
     });
 
     it('fires alert event from middleware', async () => {
-      type MyAlert = ITemplateAlert & { path: string };
-      let events: ITemplateEvent[] = [];
+      type MyAlert = types.ITemplateAlertPayload & { path: string };
+      let events: types.ITemplateEvent[] = [];
       const tmpl = Template.create()
         .add('./example/tmpl-1')
         .use((req, res) => {
           res.alert<MyAlert>({ message: 'Foo', path: req.path.source });
-          res.next();
+          res.done('NEXT');
         });
 
       tmpl.events$.subscribe(e => (events = [...events, e]));
-
       await tmpl.execute();
 
       expect(events.length).to.be.greaterThan(0);
       const e = events
+        .filter(e => e.type === 'ALERT')
         .map(e => e.payload as MyAlert)
         .find(e => e.path.endsWith('.babelrc'));
 
       expect(e && e.message).to.eql('Foo');
       expect(e && e.path).to.eql('/.babelrc');
     });
+  });
+
+  it('fires start/complete events around [execute]', async () => {
+    let events: types.ITemplateEvent[] = [];
+    const tmpl = Template.create()
+      .add('./example/tmpl-1')
+      .use(async (req, res) => {
+        res.alert({ message: 'middleware' });
+        res.next();
+      });
+
+    tmpl.events$.subscribe(e => (events = [...events, e]));
+    const files = await tmpl.files();
+    await tmpl.execute();
+    expect(events.length).to.be.greaterThan(2);
+
+    const first = events[0] as types.IExecuteTemplateStart;
+    const last = events[events.length - 1] as types.IExecuteTemplateComplete;
+
+    expect(first.type).to.eql('EXECUTE/start');
+    expect(last.type).to.eql('EXECUTE/complete');
+
+    expect(first.payload.files).to.eql(files);
+    expect(last.payload.files).to.eql(files);
   });
 });

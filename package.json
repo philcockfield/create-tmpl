@@ -1,6 +1,6 @@
 {
   "name": "create-tmpl",
-  "version": "0.1.4",
+  "version": "0.1.14",
   "description": "Succinct powerful template stamper.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -10,29 +10,26 @@
   "scripts": {
     "tmp": "node lib/bin $@",
     "start": "node .",
-    "test": "sh ./node_modules/@tdb/test/sh/test.sh",
-    "tdd": "yarn run test --reporter min --watch",
-    "lint": "sh ./node_modules/@tdb/typescript/sh/lint.sh $@",
-    "build": "sh ./node_modules/@tdb/typescript/sh/build.sh $@",
-    "prepare": "yarn run build && yarn run lint && yarn test"
+    "test": "ts test",
+    "tdd": "ts test --watch",
+    "lint": "ts lint",
+    "build": "ts build",
+    "prepare": "ts prepare"
   },
   "dependencies": {
-    "@tdb/npm": "0.1.0",
-    "@tdb/util": "1.9.26",
+    "@platform/cli": "0.0.26",
+    "@platform/fs": "0.0.25",
+    "@tdb/npm": "0.1.21",
+    "@tdb/util": "1.9.38",
     "@types/inquirer": "0.0.43",
-    "@types/js-yaml": "3.12.0",
-    "@types/listr": "0.13.0",
     "fast-glob": "2.2.6",
-    "inquirer": "6.2.1",
-    "isbinaryfile": "4.0.0",
-    "js-yaml": "3.12.1",
-    "listr": "0.14.3",
-    "yargs": "12.0.5"
+    "inquirer": "6.2.2",
+    "isbinaryfile": "4.0.0"
   },
   "devDependencies": {
-    "@tdb/test": "1.2.13",
-    "@tdb/typescript": "3.2.8",
-    "@types/yargs": "12.0.7"
+    "@platform/test": "0.0.6",
+    "@platform/ts.cli": "3.3.9",
+    "@types/yargs": "12.0.8"
   },
   "files": [
     "lib",
