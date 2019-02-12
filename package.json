@@ -17,8 +17,8 @@
     "prepare": "ts prepare"
   },
   "dependencies": {
-    "@platform/cli": "0.0.32",
-    "@platform/fs": "0.0.31",
+    "@platform/cli": "0.0.33",
+    "@platform/fs": "0.0.32",
     "@tdb/npm": "0.1.21",
     "@tdb/util": "1.9.38",
     "@types/inquirer": "0.0.43",
@@ -27,8 +27,8 @@
     "isbinaryfile": "4.0.0"
   },
   "devDependencies": {
-    "@platform/test": "0.0.25",
-    "@platform/ts.cli": "3.3.25",
+    "@platform/test": "0.0.26",
+    "@platform/ts.cli": "3.3.26",
     "@types/yargs": "12.0.8"
   },
   "files": [
