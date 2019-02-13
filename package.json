@@ -19,8 +19,8 @@
   "dependencies": {
     "@platform/cli": "0.0.33",
     "@platform/fs": "0.0.32",
+    "@platform/util.value": "^0.0.6",
     "@tdb/npm": "0.1.21",
-    "@tdb/util": "1.9.38",
     "@types/inquirer": "0.0.43",
     "fast-glob": "2.2.6",
     "inquirer": "6.2.2",
