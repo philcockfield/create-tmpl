@@ -17,9 +17,9 @@
     "prepare": "ts prepare"
   },
   "dependencies": {
-    "@platform/cli": "0.0.39",
+    "@platform/cli": "0.0.40",
     "@platform/fs": "0.0.33",
-    "@platform/util.value": "0.0.11",
+    "@platform/util.value": "0.0.12",
     "@tdb/npm": "0.1.21",
     "@types/inquirer": "0.0.43",
     "fast-glob": "2.2.6",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@platform/test": "0.0.26",
-    "@platform/ts.cli": "3.3.32",
+    "@platform/ts.cli": "3.3.33",
     "@types/yargs": "12.0.8"
   },
   "files": [
