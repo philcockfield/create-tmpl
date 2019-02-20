@@ -17,23 +17,20 @@
     "prepare": "ts prepare"
   },
   "dependencies": {
-    "@platform/cli": "0.0.48",
-    "@platform/fs": "0.0.34",
-    "@platform/util.value": "0.0.21",
+    "@platform/cli": "0.0.53",
+    "@platform/fs": "0.0.35",
+    "@platform/util.value": "0.0.27",
     "@tdb/npm": "0.1.21",
     "@types/inquirer": "0.0.43",
-    "fast-glob": "2.2.6",
     "inquirer": "6.2.2",
     "isbinaryfile": "4.0.0"
   },
   "devDependencies": {
-    "@platform/test": "0.0.27",
-    "@platform/ts.cli": "3.3.42",
-    "@types/yargs": "12.0.9"
+    "@platform/test": "0.0.28",
+    "@platform/ts": "3.3.53"
   },
   "files": [
-    "lib",
-    "src"
+    "lib"
   ],
   "keywords": [
     "template",
@@ -43,6 +40,6 @@
     "rxjs",
     "composable"
   ],
-  "repository": "https://github.com/philcockfield/create-tmpl",
+  "repository": "philcockfield/create-tmpl",
   "license": "MIT"
 }
