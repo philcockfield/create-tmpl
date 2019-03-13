@@ -1,4 +1,4 @@
-export * from '@tdb/npm/lib/types';
+export * from '@platform/npm/lib/types';
 export * from './common/prompt/types';
 
 /**

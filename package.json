@@ -19,8 +19,8 @@
   "dependencies": {
     "@platform/cli": "0.0.61",
     "@platform/fs": "0.0.38",
+    "@platform/npm": "0.0.33",
     "@platform/util.value": "0.0.35",
-    "@tdb/npm": "0.1.21",
     "@types/inquirer": "0.0.44",
     "inquirer": "6.2.2",
     "isbinaryfile": "4.0.0"

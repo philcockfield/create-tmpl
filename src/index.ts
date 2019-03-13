@@ -1,13 +1,4 @@
-export {
-  npm,
-  fs,
-  semver,
-  NpmPackage,
-  yaml,
-  file,
-  Listr,
-  prompt,
-} from './common';
+export { npm, fs, semver, NpmPackage, Listr, prompt } from './common';
 export * from './types';
 import * as tmpl from './tmpl';
 
