@@ -19,15 +19,15 @@
   "dependencies": {
     "@platform/cli": "0.0.63",
     "@platform/fs": "0.0.40",
-    "@platform/npm": "0.0.38",
-    "@platform/util.value": "0.0.40",
+    "@platform/npm": "0.0.39",
+    "@platform/util.value": "0.0.41",
     "@types/inquirer": "0.0.44",
     "inquirer": "6.2.2",
     "isbinaryfile": "4.0.0"
   },
   "devDependencies": {
     "@platform/test": "0.0.33",
-    "@platform/ts": "3.3.66"
+    "@platform/ts": "3.3.67"
   },
   "files": [
     "lib"
