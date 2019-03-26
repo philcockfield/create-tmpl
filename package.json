@@ -1,6 +1,6 @@
 {
   "name": "create-tmpl",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "Succinct powerful template stamper.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
