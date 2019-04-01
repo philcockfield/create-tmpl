@@ -17,15 +17,15 @@
     "prepare": "ts prepare"
   },
   "dependencies": {
-    "@platform/cli": "0.0.69",
-    "@platform/npm": "0.0.46",
+    "@platform/cli": "0.0.70",
+    "@platform/npm": "0.0.47",
     "@types/inquirer": "6.0.0",
     "inquirer": "6.2.2",
     "isbinaryfile": "4.0.0"
   },
   "devDependencies": {
-    "@platform/test": "0.0.36",
-    "@platform/ts": "3.3.74"
+    "@platform/test": "0.0.37",
+    "@platform/ts": "3.3.75"
   },
   "files": [
     "lib"
