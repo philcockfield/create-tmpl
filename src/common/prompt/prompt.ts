@@ -12,13 +12,14 @@ export async function forOption<T extends IPrompt>(
     name: label,
     value: id,
   }));
-  const confirm = {
+  const confirm: inquirer.ListQuestion<any> = {
     type: 'list',
     name: 'id',
     message: title,
     choices,
   };
-  const { id } = (await inquirer.prompt(confirm)) as { id: string };
+
+  const { id } = (await inquirer.prompt([confirm])) as { id: string };
   const result = options.find(item => item.id === id);
   return result;
 }
@@ -31,7 +32,7 @@ export async function forText(message: string) {
   if (!message.endsWith('?')) {
     message += ':';
   }
-  const confirm = {
+  const confirm: inquirer.InputQuestion<any> = {
     type: 'input',
     name: 'value',
     message: message,

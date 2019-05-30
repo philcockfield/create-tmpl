@@ -1,5 +1,5 @@
 export * from '@platform/npm/lib/types';
-// export * from './common/prompt/types';
+export * from './common/prompt/types';
 
 /**
  * The source location of template file(s).
