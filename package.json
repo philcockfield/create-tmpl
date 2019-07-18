@@ -20,8 +20,8 @@
     "@platform/cli": "0.1.12",
     "@platform/npm": "0.1.44",
     "@types/inquirer": "6.0.3",
-    "inquirer": "6.4.1",
-    "isbinaryfile": "4.0.1"
+    "inquirer": "6.5.0",
+    "isbinaryfile": "4.0.2"
   },
   "devDependencies": {
     "@platform/test": "0.0.59",
