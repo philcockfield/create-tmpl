@@ -109,7 +109,7 @@ When working with a `Template` you'll move through three stages:
 2. [Filters](#Filtering) and [middleware processors](#Middleware).
 3. Execution
 
-Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` methods return a new instance of the `Template` (conceptually similar to [rx  ](https://github.com/ReactiveX/rxjs)).
+Templates are immutable, meaning any calls to the `.add`, `.filter`, `.use` methods return a new instance of the `Template` (conceptually similar to [rxjs](https://github.com/ReactiveX/rxjs)).
 
 
 <p>&nbsp;</p>  
