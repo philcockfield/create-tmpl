@@ -1,6 +1,6 @@
 {
   "name": "create-tmpl",
-  "version": "0.1.70",
+  "version": "1.0.0",
   "description": "Succinct powerful template stamper.",
   "main": "./lib/index",
   "types": "./lib/index.d.ts",
@@ -8,7 +8,7 @@
     "tmpl": "./lib/bin/index.js"
   },
   "scripts": {
-    "tmp": "node lib/bin $@",
+    "demo": "node lib/bin $@",
     "start": "node .",
     "test": "ts test",
     "tdd": "ts test --watch",
@@ -17,18 +17,16 @@
     "prepare": "ts prepare"
   },
   "dependencies": {
-    "@platform/cli": "0.5.12",
-    "@platform/npm": "0.2.46",
-    "@types/inquirer": "6.5.0",
-    "inquirer": "7.0.4",
-    "isbinaryfile": "4.0.4"
+    "@platform/tmpl": "0.1.0"
   },
   "devDependencies": {
     "@platform/test": "0.1.2",
     "@platform/ts": "3.7.12"
   },
   "files": [
-    "lib"
+    "!lib/test",
+    "!*.TEST.{js, mjs, d.ts}",
+    "!*.INTEGRATION.{js, mjs, d.ts}"
   ],
   "keywords": [
     "template",
